@@ -1,4 +1,5 @@
 
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
@@ -16,6 +17,9 @@
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- html2pdf.js for PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <style>
         /* CSS Styles */
         :root {
@@ -30,457 +34,288 @@
             --bg-calculator: #f3eaff;
         }
 
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            margin: 0;
-            padding: 0;
-            color: #333;
-            line-height: 1.8;
-            background-color: var(--color-light-grey);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px 40px;
-            text-align: center;
-        }
-
-        /* Headings and Text */
-        h1, h2, h3, h4 {
-            margin: 0.5em 0;
-        }
-
-        h1 {
-            font-size: 2.2rem;
-            font-weight: 900;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-        }
-
-        h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--color-dark-grey);
-            margin-bottom: 1em;
-        }
-
-        h3 {
-            font-size: 1.2rem;
-            font-weight: 400;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        h4 {
-            font-size: 1rem;
-            font-weight: 400;
-        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Noto Sans TC', sans-serif; margin: 0; padding: 0; color: #333; line-height: 1.8; background-color: var(--color-light-grey); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px 40px; text-align: center; }
+        h1, h2, h3, h4 { margin: 0.5em 0; }
+        h1 { font-size: 2.2rem; font-weight: 900; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
+        h2 { font-size: 2rem; font-weight: 700; color: var(--color-dark-grey); margin-bottom: 1em; }
+        h3 { font-size: 1.2rem; font-weight: 400; max-width: 800px; margin-left: auto; margin-right: auto; }
+        h4 { font-size: 1rem; font-weight: 400; }
 
         .text-left { text-align: left; }
         .text-blue { color: var(--color-primary); }
         .text-bold-blue { color: var(--color-primary); font-weight: 700; text-align: center; }
 
-        /* Section-specific Styles */
-        .section {
-            padding: 50px 0;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        .section:last-child {
-            border-bottom: none;
-        }
-
-        /* Section A: Hero */
-        .section-a {
-            background: var(--gradient-hero);
-            color: white;
-            padding: 60px 20px;
-        }
-
-        /* Section B, C, F, G, H */
-        .section-b, .section-c, .section-f, .section-g, .section-h {
-            background-color: #ffffff;
-        }
-
-        /* Section D: Progress */
-        .section-d {
-            background-color: var(--bg-progress);
-            color: var(--color-primary);
-        }
+        .section { padding: 50px 0; border-bottom: 1px solid #e0e0e0; }
+        .section:last-child { border-bottom: none; }
+        .section-a { background: var(--gradient-hero); color: white; padding: 60px 20px; }
+        .section-b, .section-c, .section-f, .section-g, .section-h { background-color: #ffffff; }
+        .section-d { background-color: var(--bg-progress); color: var(--color-primary); }
         .section-d h2 { color: var(--color-primary); }
-
-        /* Section E: Calculator */
-        .section-e {
-            background-color: var(--bg-calculator);
-        }
+        .section-e { background-color: var(--bg-calculator); }
         .section-e h2 { color: var(--color-secondary); }
         .section-e h3 { color: var(--color-secondary); }
-        .calculator-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin: 25px 0;
-        }
-        .input-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: white;
-            padding: 12px 18px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-        }
+
+        .calculator-wrapper { display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; margin: 25px 0; }
+        .input-group { display: flex; align-items: center; gap: 10px; background: white; padding: 12px 18px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
         .input-group i { color: var(--color-secondary); font-size: 1.2rem; }
         .input-group label { font-weight: 700; }
-        .input-group input {
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 8px;
-            width: 60px;
-            text-align: center;
-            font-size: 1rem;
-        }
-        .button-group {
-            margin: 25px 0;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        .button-group button {
-            padding: 12px 28px;
-            font-size: 1.1rem;
-            font-family: 'Noto Sans TC', sans-serif;
-            font-weight: 700;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .button-group button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
+        .input-group input { border: 1px solid #ccc; border-radius: 4px; padding: 8px; width: 60px; text-align: center; font-size: 1rem; }
+        .button-group { margin: 25px 0; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .button-group button { padding: 12px 28px; font-size: 1.1rem; font-family: 'Noto Sans TC', sans-serif; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .button-group button:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
         #calculate-btn { background-color: #8e44ad; color: white; }
         #select-all-btn { background-color: #27ae60; color: white; }
         #deselect-all-btn { background-color: #c0392b; color: white; }
 
-        /* Section F: Category Summary */
-        .category-summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-            text-align: left;
-        }
-        .category-card {
-            background: #ffffff;
-            border: 1px solid #eee;
-            border-radius: 12px;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .category-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-        }
-        .category-card .icon {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 1.8rem;
-            color: #ccc;
-        }
-        .category-card-title {
-            margin-top: 40px;
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-        .category-card-cost {
-            text-align: right;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--color-primary);
-            margin-top: 10px;
-        }
+        .category-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 40px; text-align: left; }
+        .category-card { background: #ffffff; border: 1px solid #eee; border-radius: 12px; padding: 20px; position: relative; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .category-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+        .category-card .icon { position: absolute; top: 20px; left: 20px; font-size: 1.8rem; color: #ccc; }
+        .category-card-title { margin-top: 40px; font-weight: 700; font-size: 1.2rem; }
+        .category-card-cost { text-align: right; font-size: 1.4rem; font-weight: 700; color: var(--color-primary); margin-top: 10px; }
 
-        /* Pie Chart */
-        .pie-chart-container {
-            max-width: 450px;
-            margin: 40px auto;
-        }
+        .pie-chart-container { max-width: 450px; margin: 40px auto; position: relative; height:450px; width:100%; }
 
-        /* Section G: Item Cards */
-        .item-cards-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-            text-align: left;
-        }
-        .item-card {
-            background: #ffffff;
-            border: 2px solid var(--color-unchecked);
-            border-radius: 12px;
-            padding: 20px;
-            cursor: pointer;
-            position: relative;
-            transition: transform 0.2s, box-shadow 0.2s, border-color 0.3s;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .item-card.selected {
-            border: 3px solid var(--color-checked);
-        }
-        .item-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        }
-        .item-card-category {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #777;
-            margin-bottom: 10px;
-        }
-        .item-card-name {
-            font-weight: 700;
-            font-size: 1.15rem;
-            margin-bottom: 15px;
-            flex-grow: 1;
-        }
-        .item-card-footer {
-            margin-top: 15px;
-        }
-        .item-card-price {
-            font-weight: 700;
-            color: var(--color-primary);
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-        }
-        .quantity-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
+        .item-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; text-align: left; }
+        .item-card { background: #ffffff; border: 2px solid var(--color-unchecked); border-radius: 12px; padding: 20px; cursor: pointer; position: relative; transition: transform 0.2s, box-shadow 0.2s, border-color 0.3s; display: flex; flex-direction: column; justify-content: space-between; }
+        .item-card.selected { border: 3px solid var(--color-checked); }
+        .item-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+        .item-card-category { font-size: 0.9rem; font-weight: 700; color: #777; margin-bottom: 10px; }
+        .item-card-name { font-weight: 700; font-size: 1.15rem; margin-bottom: 15px; flex-grow: 1; }
+        .item-card-footer { margin-top: 15px; }
+        .item-card-price { font-weight: 700; color: var(--color-primary); font-size: 1.2rem; margin-bottom: 10px; }
+        .quantity-wrapper { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
         .quantity-wrapper label { font-size: 0.9rem; }
-        .quantity-wrapper input {
-            width: 50px;
-            padding: 5px;
-            text-align: center;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .checkbox-wrapper {
-            margin-top: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-        }
-        .checkbox-wrapper input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
+        .quantity-wrapper input { width: 50px; padding: 5px; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
+        .checkbox-wrapper { margin-top: 15px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
+        .checkbox-wrapper input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+
+        .item-card .tooltip { visibility: hidden; width: 240px; background-color: rgba(0,0,0,0.8); color: #fff; text-align: center; border-radius: 6px; padding: 10px; position: absolute; z-index: 10; bottom: 105%; left: 50%; margin-left: -120px; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .item-card .tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: rgba(0,0,0,0.8) transparent transparent transparent; }
+        .item-card:hover .tooltip { visibility: visible; opacity: 1; }
+
+        .fab-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; align-items: center; gap: 15px; z-index: 1000; }
+        .fab-button { background-color: var(--color-primary); color: white; width: 60px; height: 60px; border-radius: 50%; border: none; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.3s ease; }
+        .fab-button:hover { background-color: #00418a; transform: scale(1.1); }
+        .fab-label { background-color: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; white-space: nowrap; position: absolute; right: 75px; top: 50%; transform: translateY(-50%); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .fab-item:hover .fab-label { opacity: 1; }
+        .fab-item { position: relative; display: flex; align-items: center; }
+        #back-to-top { display: none; }
+
+        @media print {
+            @page { size: A4 landscape; }
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .section { border: none; padding: 20px 0; }
+            .fab-container, .button-group { display: none !important; }
+            .item-card { page-break-inside: avoid; }
+            .category-summary-grid { page-break-inside: avoid; }
+            .pie-chart-container { max-width: 100%; page-break-inside: avoid; }
         }
 
-        .item-card .tooltip {
-            visibility: hidden;
-            width: 240px;
-            background-color: rgba(0,0,0,0.8);
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 10px;
-            position: absolute;
-            z-index: 10;
-            bottom: 105%;
-            left: 50%;
-            margin-left: -120px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-        .item-card .tooltip::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: rgba(0,0,0,0.8) transparent transparent transparent;
-        }
-        .item-card:hover .tooltip {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .item-cards-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
+        @media (max-width: 1024px) { .item-cards-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) {
             .container { padding: 20px; }
-            h1 { font-size: 1.8rem; }
-            h2 { font-size: 1.6rem; }
-            h3 { font-size: 1.1rem; }
+            h1 { font-size: 1.8rem; } h2 { font-size: 1.6rem; } h3 { font-size: 1.1rem; }
             .item-cards-grid { grid-template-columns: 1fr; }
             .category-summary-grid { grid-template-columns: 1fr; }
+            .fab-container { bottom: 20px; right: 20px; }
+            .fab-button { width: 55px; height: 55px; }
         }
     </style>
 </head>
 <body>
+    <div id="page-content">
+        <!-- Sections A to H as before -->
+        <!-- Section A: 網頁主題句 -->
+        <section class="section section-a">
+            <div class="container">
+                <h1>若飛機未來可能下墜，你要等別人遞給你降落傘？還是現在，就為自己準備一把？！</h1>
+                <h1>一起準備防災包表達對家庭的愛！</h1>
+            </div>
+        </section>
 
-    <!-- Section A: 網頁主題句 -->
-    <section class="section section-a">
-        <div class="container">
-            <h1>若飛機未來可能下墜，你要等別人遞給你降落傘？還是現在，就為自己準備一把？！</h1>
-            <h1>一起準備防災包表達對家庭的愛！</h1>
-        </div>
-    </section>
+        <!-- Section B: 網頁引言句 -->
+        <section class="section section-b">
+            <div class="container">
+                <h2>引言</h2>
+                <h3 class="text-left">「在戰爭與屈辱面前，你選擇了屈辱！可是，屈辱過後，你仍得面對戰爭！」</h3>
+                <h3 class="text-left">— 已故英國首相，溫斯頓·丘吉爾(1938)</h3>
+                <br>
+                <h3 class="text-left">台灣正處在一個平行時空的分歧點。</h3>
+                <h3 class="text-left">如果你知道，關鍵日的一個選擇，可能導致兩條完全不同的時空線──自由 VS 極權</h3>
+                <h3 class="text-left">你會選擇提早準備，還是袖手旁觀繼續等待？</h3>
+                <h3 class="text-left">作者近兩個月進行了一項「希望永遠用不到，但一旦需要就關乎生死」的任務：準備家庭災難包。</h3>
+                <h3 class="text-left">準備這些真的很耗神、耗錢也耗時間。但換來的，是內心的安定感，還有當意外發生時，不至於只能手忙腳亂搶物資，避免等別人告訴你怎麼辦的那種被動感。</h3>
+                <h3 class="text-left">颱風、地震、疫情，大家都會做一點準備，但面對更極端且複合式的風險，反而會因為太沉重，而選擇壓抑與忽略不安。</h3>
+                <h3 class="text-left">但事實上，戰爭就是最高強度的綜合災難：水電中斷、物資短缺、資訊封鎖、網路癱瘓、醫療癱瘓、交通停擺、財產喪失、人身威脅，以及各種型態的暴力與侵害。</h3>
+                <h3 class="text-left">不管你的身分與價值觀，這些災難都不會先敲門詢問你的同意：「Hey, bro! Do you want a battle?」</h3>
+                <h3 class="text-left">我希望自己能做決定，而不是在別人決定後被迫接受結果。生存與尊嚴，也應該是我們主動做出的選擇，而不是寄託敵人的仁慈與善意，或讓他人替我們規劃。</h3>
+            </div>
+        </section>
 
-    <!-- Section B: 網頁引言句 -->
-    <section class="section section-b">
-        <div class="container">
-            <h2>引言</h2>
-            <h3 class="text-left">「在戰爭與屈辱面前，你選擇了屈辱！可是，屈辱過後，你仍得面對戰爭！」</h3>
-            <h3 class="text-left">— 已故英國首相，溫斯頓·丘吉爾(1938)</h3>
-            <br>
-            <h3 class="text-left">台灣正處在一個平行時空的分歧點。</h3>
-            <h3 class="text-left">如果你知道，關鍵日的一個選擇，可能導致兩條完全不同的時空線──自由 VS 極權</h3>
-            <h3 class="text-left">你會選擇提早準備，還是袖手旁觀繼續等待？</h3>
-            <h3 class="text-left">作者近兩個月進行了一項「希望永遠用不到，但一旦需要就關乎生死」的任務：準備家庭災難包。</h3>
-            <h3 class="text-left">準備這些真的很耗神、耗錢也耗時間。但換來的，是內心的安定感，還有當意外發生時，不至於只能手忙腳亂搶物資，避免等別人告訴你怎麼辦的那種被動感。</h3>
-            <h3 class="text-left">颱風、地震、疫情，大家都會做一點準備，但面對更極端且複合式的風險，反而會因為太沉重，而選擇壓抑與忽略不安。</h3>
-            <h3 class="text-left">但事實上，戰爭就是最高強度的綜合災難：水電中斷、物資短缺、資訊封鎖、網路癱瘓、醫療癱瘓、交通停擺、財產喪失、人身威脅，以及各種型態的暴力與侵害。</h3>
-            <h3 class="text-left">不管你的身分與價值觀，這些災難都不會先敲門詢問你的同意：「Hey, bro! Do you want a battle?」</h3>
-            <h3 class="text-left">我希望自己能做決定，而不是在別人決定後被迫接受結果。生存與尊嚴，也應該是我們主動做出的選擇，而不是寄託敵人的仁慈與善意，或讓他人替我們規劃。</h3>
-        </div>
-    </section>
+        <!-- Section C: 防災包建議清單 -->
+        <section class="section section-c">
+            <div class="container">
+                <h2>防災包建議清單</h2>
+                <h3 class="text-blue">「準備不完全，也勝過完全不準備」— 這一份我為家庭準備的防災包清單，希望能為您提供一些準備時的參考。</h3>
+                <h3 class="text-left">依照人體生存所需的優先順序排列，從1~9依序排列與分類：依序是："1濾水與儲水", "2長效期糧食", "3衛生與醫療", "4保暖與衣物", "5能源與燃料", "6通訊", "7防火逃生", "8基礎綜合", "9其他"。</h3>
+            </div>
+        </section>
 
-    <!-- Section C: 防災包建議清單 -->
-    <section class="section section-c">
-        <div class="container">
-            <h2>防災包建議清單</h2>
-            <h3 class="text-blue">「準備不完全，也勝過完全不準備」— 這一份我為家庭準備的防災包清單，希望能為您提供一些準備時的參考。</h3>
-            <h3 class="text-left">依照人體生存所需的優先順序排列，從1~9依序排列與分類：依序是："1濾水與儲水", "2長效期糧食", "3衛生與醫療", "4保暖與衣物", "5能源與燃料", "6通訊", "7防火逃生", "8基礎綜合", "9其他"。</h3>
-        </div>
-    </section>
+        <!-- Section D: 我的家庭防災包選擇進度 -->
+        <section class="section section-d">
+            <div class="container text-left">
+                <h2>我的家庭防災包選擇進度</h2>
+                <h3>您已勾選 <span id="selected-count">0</span> 個品項</h3>
+                <h3>已勾選品項預估總金額：NT$ <span id="total-cost">0</span></h3>
+                <h4>繼續努力，一起讓您的家庭更安全！</h4>
+            </div>
+        </section>
 
-    <!-- Section D: 我的家庭防災包選擇進度 -->
-    <section class="section section-d">
-        <div class="container text-left">
-            <h2>我的家庭防災包選擇進度</h2>
-            <h3>您已勾選 <span id="selected-count">0</span> 個品項</h3>
-            <h3>已勾選品項預估總金額：NT$ <span id="total-cost">0</span></h3>
-            <h4>繼續努力，一起讓您的家庭更安全！</h4>
-        </div>
-    </section>
-
-    <!-- Section E: 依人數與天數預估數量 -->
-    <section class="section section-e">
-        <div class="container">
-            <h2>依人數與天數預估數量</h2>
-            <h3 class="text-left">請輸入家庭成員人數與預估儲備天數，系統將自動計算「濾水與儲水」及「長效期糧食」的建議數量。</h3>
-            <h3 class="text-left">注意：其他類別品項數量需手動調整。</h3>
-            <div class="calculator-wrapper">
-                <div class="input-group">
-                    <i class="fas fa-user"></i>
-                    <label for="adults">大人人數</label>
-                    <input type="number" id="adults" value="2" min="0">
+        <!-- Section E: 依人數與天數預估數量 -->
+        <section class="section section-e">
+            <div class="container">
+                <h2>依人數與天數預估數量</h2>
+                <h3 class="text-left">請輸入家庭成員人數與預估儲備天數，系統將自動計算「濾水與儲水」及「長效期糧食」的建議數量。</h3>
+                <h3 class="text-left">注意：其他類別品項數量需手動調整。</h3>
+                <div class="calculator-wrapper">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <label for="adults">大人人數</label>
+                        <input type="number" id="adults" value="2" min="0">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-child"></i>
+                        <label for="children">小孩人數</label>
+                        <input type="number" id="children" value="1" min="0">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-calendar-alt"></i>
+                        <label for="days">預估儲備天數</label>
+                        <input type="number" id="days" value="14" min="1">
+                    </div>
                 </div>
-                <div class="input-group">
-                    <i class="fas fa-child"></i>
-                    <label for="children">小孩人數</label>
-                    <input type="number" id="children" value="1" min="0">
+                <div class="button-group">
+                    <button id="calculate-btn">計算建議數量</button>
+                    <button id="select-all-btn">快速全部勾選</button>
+                    <button id="deselect-all-btn">快速全部取消</button>
                 </div>
-                <div class="input-group">
-                    <i class="fas fa-calendar-alt"></i>
-                    <label for="days">預估儲備天數</label>
-                    <input type="number" id="days" value="14" min="1">
+                <h4 class="text-left" style="max-width: 800px; margin: 1em auto;">預設建議值：成人以70公斤男性計算，每日熱量需求2,500大卡，飲水2.5公升；小孩以成人的50%需求量做計算。</h4>
+            </div>
+        </section>
+
+        <!-- Section F: 各類別金額小計 -->
+        <section class="section section-f">
+            <div class="container">
+                <h2>類別金額小計</h2>
+                <div id="category-summary" class="category-summary-grid"></div>
+                <div class="pie-chart-container">
+                    <canvas id="category-pie-chart"></canvas>
                 </div>
             </div>
-            <div class="button-group">
-                <button id="calculate-btn">計算建議數量</button>
-                <button id="select-all-btn">快速全部勾選</button>
-                <button id="deselect-all-btn">快速全部取消</button>
-            </div>
-            <h4 class="text-left" style="max-width: 800px; margin: 1em auto;">預設建議值：成人以70公斤男性計算，每日熱量需求2,500大卡，飲水2.5公升；小孩以成人的50%需求量做計算。</h4>
-        </div>
-    </section>
+        </section>
 
-    <!-- Section F: 各類別金額小計 -->
-    <section class="section section-f">
-        <div class="container">
-            <h2>類別金額小計</h2>
-            <div id="category-summary" class="category-summary-grid">
-                <!-- Category cards will be inserted here by JavaScript -->
+        <!-- Section G: 詳細品項與單價數量 -->
+        <section class="section section-g">
+            <div class="container">
+                <h2>詳細品項與單價數量</h2>
+                <h3 class="text-left" style="max-width: 1200px; margin: 1em auto;">詳細資訊可以下載Excel原始檔案。(此處您可以放上檔案的下載連結)</h3>
+                <div id="item-cards-container" class="item-cards-grid"></div>
             </div>
-            <div class="pie-chart-container">
-                <canvas id="category-pie-chart"></canvas>
+        </section>
+        
+        <!-- Section H: 結語 -->
+        <section class="section section-h">
+            <div class="container">
+                <h2>結語</h2>
+                <h3 class="text-left">如果你也曾經覺得焦慮，不妨貼近「第一性原理」來思考：</h3>
+                <h3 class="text-left">你真正的焦慮與擔心是什麼？（生命財產？生活方式？下一代？…）</h3>
+                <h3 class="text-left">讓你不安的因素來自哪裡？（人？事？物？…）</h3>
+                <h3 class="text-left">你現在能做的有什麼？（強化家庭韌性準備？出國移民？祈禱？…）</h3>
+                <h3 class="text-left">這些問題的答案，每個人應該不會一樣，但能幫助我們釐清──什麼是讓你焦慮的源頭？什麼行動能讓你感到安心？</h3>
+                <br>
+                <h3 class="text-bold-blue text-left" style="max-width: 800px; margin: 1em auto;">「行動起來，就是選擇不依賴敵人的善意替你決定未來！」</h3>
+                <br>
+                <h3 class="text-bold-blue">🔁 若您覺得這篇內容對您或您的家人有所幫助，歡迎分享或轉貼。</h3>
+                <h3 class="text-bold-blue">🧩 國家的韌性，從每個家庭的準備開始。</h3>
+                <h3 class="text-bold-blue">✨ 願民主與繁榮與我們同在──直到永遠！</h3>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
-    <!-- Section G: 詳細品項與單價數量 -->
-    <section class="section section-g">
-        <div class="container">
-            <h2>詳細品項與單價數量</h2>
-            <h3 class="text-left" style="max-width: 1200px; margin: 1em auto;">詳細資訊可以下載Excel原始檔案。(此處您可以放上檔案的下載連結)</h3>
-            <div id="item-cards-container" class="item-cards-grid">
-                <!-- Item cards will be inserted here by JavaScript -->
-            </div>
+    <!-- Floating Action Buttons -->
+    <div class="fab-container">
+        <div class="fab-item">
+            <button id="fab-pdf" class="fab-button"><i class="fas fa-file-pdf"></i></button>
+            <span class="fab-label">產生PDF</span>
         </div>
-    </section>
-    
-    <!-- Section H: 結語 -->
-    <section class="section section-h">
-        <div class="container">
-            <h2>結語</h2>
-            <h3 class="text-left">如果你也曾經覺得焦慮，不妨貼近「第一性原理」來思考：</h3>
-            <h3 class="text-left">你真正的焦慮與擔心是什麼？（生命財產？生活方式？下一代？…）</h3>
-            <h3 class="text-left">讓你不安的因素來自哪裡？（人？事？物？…）</h3>
-            <h3 class="text-left">你現在能做的有什麼？（強化家庭韌性準備？出國移民？祈禱？…）</h3>
-            <h3 class="text-left">這些問題的答案，每個人應該不會一樣，但能幫助我們釐清──什麼是讓你焦慮的源頭？什麼行動能讓你感到安心？</h3>
-            <br>
-            <h3 class="text-bold-blue text-left" style="max-width: 800px; margin: 1em auto;">「行動起來，就是選擇不依賴敵人的善意替你決定未來！」</h3>
-            <br>
-            <h3 class="text-bold-blue">🔁 若您覺得這篇內容對您或您的家人有所幫助，歡迎分享或轉貼。</h3>
-            <h3 class="text-bold-blue">🧩 國家的韌性，從每個家庭的準備開始。</h3>
-            <h3 class="text-bold-blue">✨ 願民主與繁榮與我們同在──直到永遠！</h3>
+        <div class="fab-item">
+            <button id="fab-save" class="fab-button"><i class="fas fa-save"></i></button>
+            <span class="fab-label">儲存紀錄檔</span>
         </div>
-    </section>
-    
+        <div class="fab-item">
+            <button id="fab-load" class="fab-button"><i class="fas fa-folder-open"></i></button>
+            <span class="fab-label">載入紀錄檔</span>
+        </div>
+        <div class="fab-item">
+            <a href="#page-content" id="back-to-top" class="fab-button"><i class="fas fa-arrow-up"></i></a>
+            <span class="fab-label">回到頂端</span>
+        </div>
+    </div>
+    <input type="file" id="file-loader" accept=".json" style="display: none;">
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-
             // ===================================================================================
-            // DATA SOURCE
-            // 從您的Excel檔案轉換而來的數據
+            // DATA SOURCE - ACCURATELY PARSED FROM YOUR SPREADSHEET IMAGE (v3)
             // ===================================================================================
             const PRODUCT_DATA = [
-                { "category": "1濾水與儲水", "name": "日本MochiGoo PET材質可折疊水壺袋(8公升容量)", "notes": "PET材質水溫建議不超過60攝氏度", "price": 146.5, "link": "https://tw.shp.ee/5nuoRdJ", "food_supply_days": 0, "water_supply_days": 3.2 },
-                { "category": "1濾水與儲水", "name": "美國KATADYN MICROPUR MP1過濾隱孢蟲藥錠(一盒30顆)", "notes": "每盒30顆，每顆可處理1公升汙水，需靜置1~4小時", "price": 637.5, "link": "https://tw.shp.ee/...", "food_supply_days": 0, "water_supply_days": 12.0 },
-                { "category": "1濾水與儲水", "name": "美國Sawyer Squeeze隨身濾水器", "notes": "可過濾37萬公升的水，孔徑0.1微米，可直接飲用", "price": 1480.0, "link": "https://tw.shp.ee/...", "food_supply_days": 0, "water_supply_days": 148000.0 },
-                { "category": "2長效期糧食", "name": "美軍MREレーション Field Ration B", "notes": "每份約1200大卡，需搭配飲用水加熱。有多種菜單可選。", "price": 350.0, "link": "https://example.com/mre", "food_supply_days": 0.48, "water_supply_days": 0 },
-                { "category": "2長效期糧食", "name": "台灣製-聖光牌-能量棒(20入/盒)", "notes": "每條120大卡，適合快速補充能量", "price": 250.0, "link": "https://example.com/energybar", "food_supply_days": 0.96, "water_supply_days": 0 },
-                { "category": "3衛生與醫療", "name": "以色列軍用醫療繃帶(4吋)", "notes": "真空包裝，多功能合一，可用於止血、包紮", "price": 200.0, "link": "https://example.com/bandage", "food_supply_days": 0, "water_supply_days": 0 },
-                { "category": "4保暖與衣物", "name": "美國SOL-Emergency Bivvy緊急露宿袋", "notes": "可反射90%體溫，防水防風，輕巧好攜帶", "price": 680.0, "link": "https://example.com/bivvy", "food_supply_days": 0, "water_supply_days": 0 },
-                { "category": "5能源與燃料", "name": "日本Panasonic EVOLTA長效鹼性電池", "notes": "包含：3號AA與4號AAA電池", "price": 807.0, "link": "https://tw.shp.ee/vbbukfA", "food_supply_days": 0, "water_supply_days": 0 },
-                { "category": "5能源與燃料", "name": "美國CampMaid固體燃料塊(12顆裝)", "notes": "推薦搭配可放置固體或液態燃料的美國Vargo鈦金屬小爐具", "price": 148.8, "link": "https://tw.shp.ee/qVHMQgy", "food_supply_days": 0, "water_supply_days": 0 },
-                { "category": "6通訊", "name": "手搖發電收音機/手電筒", "notes": "AM/FM頻道，可手搖或太陽能充電，並可為手機應急充電", "price": 500.0, "link": "https://example.com/radio", "food_supply_days": 0, "water_supply_days": 0 },
-                { "category": "7防火逃生", "name": "消防署認證-家用滅火器", "notes": "適用於A、B、C類火災，應放置於易取得處", "price": 650.0, "link": "https://example.com/extinguisher", "food_supply_days": 0, "water_supply_days": 0 },
-                { "category": "8基礎綜合", "name": "多功能工具鉗", "notes": "包含鉗子、刀子、螺絲起子等多種工具", "price": 900.0, "link": "https://example.com/multitool", "food_supply_days": 0, "water_supply_days": 0 },
-                { "category": "9其他", "name": "台灣製3M舒適系列護耳罩", "notes": "在吵雜環境中保護聽力，提供安靜的休息環境。", "price": 450.0, "link": "https://example.com/earmuffs", "food_supply_days": 0, "water_supply_days": 0 }
+                // 1濾水與儲水
+                { "category": "1濾水與儲水", "name": "日本MochiGoo PET材質可折疊水壺袋(8公升容量)", "notes": "PET材質水溫建議不超過60攝氏度", "price": 147, "link": "https://tw.shp.ee/5nuoRdJ", "food_supply_days": 0, "water_supply_days": 3.2, "is_main_supply": false },
+                { "category": "1濾水與儲水", "name": "美國KATADYN MICROPUR MP1過濾隱孢蟲藥錠(一盒30顆)", "notes": "每盒30顆，每顆可處理1公升汙水，需靜置1~4小時", "price": 638, "link": "https://tw.shp.ee/jd5s5j3", "food_supply_days": 0, "water_supply_days": 12, "is_main_supply": false },
+                { "category": "1濾水與儲水", "name": "美國LifeStraw Peak個人隨身濾水器4000公升(平輸包裝)", "notes": "品牌聲譽普普，過濾效果亦未見如美國等國認證", "price": 810, "link": "https://reurl.cc/QRQW2p", "food_supply_days": 0, "water_supply_days": 1600, "is_main_supply": true }, // Main Water Supply
+                { "category": "1濾水與儲水", "name": "美國BG Water Purifier濾水劑(一包12回)", "notes": "每回12包，每回可處理20公升的汙水，需靜置1~4小時", "price": 764, "link": "https://reurl.cc/krzgEd", "food_supply_days": 0, "water_supply_days": 96, "is_main_supply": false },
+                { "category": "1濾水與儲水", "name": "美國Portable Aqua淨水劑(一組2瓶不同用途)", "notes": "一組2瓶=50顆淨水錠+50顆除味錠，可處理25公升汙水", "price": 294, "link": "https://reurl.cc/ezEaNK", "food_supply_days": 0, "water_supply_days": 10, "is_main_supply": false },
+                { "category": "1濾水與儲水", "name": "美國WATEOR 60L輕便耐用儲水袋", "notes": "最大可儲存100公升=378公升，惟說明書大小設定", "price": 2200, "link": "https://reurl.cc/oRzQYQ", "food_supply_days": 0, "water_supply_days": 151.2, "is_main_supply": false },
+                
+                // 2長效期糧食
+                { "category": "2長效期糧食", "name": "日本G-TASTE乾飯糰", "notes": "有多種口味，每包350大卡，冷水20~30分鐘，熱水3~5分鐘", "price": 197, "link": "https://reurl.cc/OMQWvR", "food_supply_days": 0.14, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "2長效期糧食", "name": "美國SurvivalTabs口糧片(每管24片/一袋24顆)", "notes": "一管24顆，合計480大卡，有2種口味生存需求，暫不建議當標準糧食", "price": 561, "link": "https://reurl.cc/bVzM5d", "food_supply_days": 0.192, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "2長效期糧食", "name": "德國POW-R1能量口糧(1盒)", "notes": "250克一份，內含1,250大卡，70公斤男性半天所需，建議須捏碎吃", "price": 280, "link": "https://reurl.cc/VzdaWy", "food_supply_days": 0.5, "water_supply_days": 0, "is_main_supply": true }, // Main Food Supply
+                { "category": "2長效期糧食", "name": "日本Osaki防災用冷凍乾燥飯(一包7枚)", "notes": "類似全球的綜合大型壓縮口糧", "price": 975, "link": "https://reurl.cc/p3R9a4", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                
+                // 3衛生與醫療
+                { "category": "3衛生與醫療", "name": "日本藍色防水OK繃(30枚)", "notes": "國軍分子醫合物輸血，將抽換民間常用OK繃", "price": 185, "link": "https://reurl.cc/EjQW1m", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "3衛生與醫療", "name": "衛生套數個", "notes": "註冊藥商合格品", "price": 180, "link": "https://reurl.cc/NQmGg6", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "3衛生與醫療", "name": "第一類常備用藥品", "notes": "註冊藥品合格品(外盒含：感冒藥、腸胃藥、痠痛藥...)", "price": 883, "link": "https://reurl.cc/NQmGg6", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "3衛生與醫療", "name": "傷口護理藥品", "notes": "註冊藥品合格品(外盒含：消毒(淋濕已滅菌棉纖維)、藥膏、紗布、彈性繃帶、滅菌貼布)", "price": 497, "link": "https://reurl.cc/NQmGg6", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "3衛生與醫療", "name": "醫療口罩(1包4個)", "notes": "--", "price": 79, "link": "https://reurl.cc/NQmGg6", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                
+                // 4保暖與衣物
+                { "category": "4保暖與衣物", "name": "台灣ADISI防水防撕裂睡袋+ADISI輕旅保潔睡袋", "notes": "--", "price": 460, "link": "https://reurl.cc/D4gQNE", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                
+                // 5能源與燃料
+                { "category": "5能源與燃料", "name": "[搜尋中]單晶矽太陽能充電板", "notes": "搜尋中...為了安全性將以日本、台灣、歐美國品牌為目標", "price": 0, "link": "", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "5能源與燃料", "name": "[搜尋中]磷酸鐵鋰移動電站(LiFePO4)", "notes": "搜尋中...為了安全性將以日本、台灣、歐美國品牌為目標", "price": 0, "link": "", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "5能源與燃料", "name": "日本Panasonic EVOLTA長效鹼性電池", "notes": "包含：3號AA與4號AAA電池", "price": 807, "link": "https://tw.shp.ee/vbbukfA", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "5能源與燃料", "name": "美國CampMaid固體燃料塊(12顆裝) x 5 + 鈦合金湯匙", "notes": "推薦搭配可放置固體或液態燃料的美國Vargo鈦金屬小爐具", "price": 12, "link": "https://tw.shp.ee/qVHMQgy", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "5能源與燃料", "name": "美國電弧點火器兼防水LED手電筒", "notes": "mini-USB充電口", "price": 790, "link": "https://tw.shp.ee/e5M8DBk", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                
+                // 6通訊
+                { "category": "6通訊", "name": "台灣ADV-AD3免執照無線電對講機2支一組", "notes": "免考取業餘無線電執照，數據功率的機種建議都沒問題", "price": 1257, "link": "https://reurl.cc/ezEMaK", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                
+                // 7防火逃生
+                { "category": "7防火逃生", "name": "台灣製緩降梯/繩索", "notes": "先到勘查500度", "price": 367, "link": "https://reurl.cc/VzdaWy", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                
+                // 8基礎綜合
+                { "category": "8基礎綜合", "name": "市售品(包含品項：防災背包、便攜剪刀、IFAK快拆生存醫療*、德國BH-580甩棍*)", "notes": "鑰匙、禦寒、破窗鐵鎚、破壞剪、至少2支", "price": 1760, "link": "https://reurl.cc/VzdaWy", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "8基礎綜合", "name": "關鍵時刻的防災包(包含：戰術大背包、德國POW-R1能量棒*、太陽能充電設備...)", "notes": "基本品項的民間網站", "price": 5589, "link": "https://reurl.cc/VzdaWy", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                
+                // 9其他
+                { "category": "9其他", "name": "關鍵時刻的防災包(包含：防毒面具、防彈背心、止血帶、醫療藥品、夜視鏡、可過濾水壺、EDC隨身藥包...)", "notes": "止血帶x3、可過濾水壺x2、濾毒罐(有機1,000元)x5、防彈背心與夜視鏡x2", "price": 14530, "link": "https://reurl.cc/VzdaWy", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "9其他", "name": "中國Keith鈦合金筷子+日本MontBell鈦合金碗(465)", "notes": "中國Keith鈦合金筷子(560)+日本MontBell鈦合金碗(465)", "price": 762, "link": "https://reurl.cc/VzdaWy", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false }
             ];
             // ===================================================================================
             // END OF DATA SOURCE
@@ -489,29 +324,25 @@
             const itemsContainer = document.getElementById('item-cards-container');
             const categorySummaryContainer = document.getElementById('category-summary');
             const pieChartCanvas = document.getElementById('category-pie-chart').getContext('2d');
-
             const selectedCountEl = document.getElementById('selected-count');
             const totalCostEl = document.getElementById('total-cost');
-            
             const adultsInput = document.getElementById('adults');
             const childrenInput = document.getElementById('children');
             const daysInput = document.getElementById('days');
-
             const calculateBtn = document.getElementById('calculate-btn');
             const selectAllBtn = document.getElementById('select-all-btn');
             const deselectAllBtn = document.getElementById('deselect-all-btn');
+            const backToTopBtn = document.getElementById('back-to-top');
+            const fabPdf = document.getElementById('fab-pdf');
+            const fabSave = document.getElementById('fab-save');
+            const fabLoad = document.getElementById('fab-load');
+            const fileLoader = document.getElementById('file-loader');
 
             let chart;
             const categoryIcons = {
-                "1濾水與儲水": "fas fa-tint",
-                "2長效期糧食": "fas fa-utensils",
-                "3衛生與醫療": "fas fa-first-aid",
-                "4保暖與衣物": "fas fa-tshirt",
-                "5能源與燃料": "fas fa-bolt",
-                "6通訊": "fas fa-satellite-dish",
-                "7防火逃生": "fas fa-fire-extinguisher",
-                "8基礎綜合": "fas fa-tools",
-                "9其他": "fas fa-ellipsis-h",
+                "1濾水與儲水": "fas fa-tint", "2長效期糧食": "fas fa-utensils", "3衛生與醫療": "fas fa-first-aid",
+                "4保暖與衣物": "fas fa-tshirt", "5能源與燃料": "fas fa-bolt", "6通訊": "fas fa-satellite-dish",
+                "7防火逃生": "fas fa-fire-extinguisher", "8基礎綜合": "fas fa-tools", "9其他": "fas fa-ellipsis-h",
             };
 
             function initializeCards() {
@@ -564,10 +395,7 @@
                 let selectedCount = 0;
                 let totalCost = 0;
                 const categoryTotals = {};
-
-                [...new Set(PRODUCT_DATA.map(p => p.category))].forEach(cat => {
-                    categoryTotals[cat] = 0;
-                });
+                [...new Set(PRODUCT_DATA.map(p => p.category))].forEach(cat => { categoryTotals[cat] = 0; });
 
                 document.querySelectorAll('.item-checkbox').forEach((checkbox, index) => {
                     const card = document.getElementById(`item-${index}`);
@@ -575,7 +403,6 @@
                         card.classList.add('selected');
                         const quantity = parseInt(document.getElementById(`qty-${index}`).value) || 0;
                         const item = PRODUCT_DATA[index];
-                        
                         selectedCount++;
                         totalCost += item.price * quantity;
                         if (categoryTotals[item.category] !== undefined) {
@@ -591,46 +418,24 @@
 
                 for (const [category, cost] of Object.entries(categoryTotals)) {
                     const costEl = document.getElementById(`cat-cost-${category.replace(/[^a-zA-Z0-9]/g, '-')}`);
-                    if(costEl) {
-                        costEl.textContent = `NT$ ${Math.round(cost).toLocaleString()}`;
-                    }
+                    if(costEl) { costEl.textContent = `NT$ ${Math.round(cost).toLocaleString()}`; }
                 }
-                
                 updatePieChart(categoryTotals);
             }
 
             function updatePieChart(categoryTotals) {
-                const sortedCategories = Object.entries(categoryTotals)
-                    .filter(([, cost]) => cost > 0)
-                    .sort(([, a], [, b]) => b - a);
-
+                const sortedCategories = Object.entries(categoryTotals).filter(([, cost]) => cost > 0).sort(([, a], [, b]) => b - a);
                 const labels = sortedCategories.map(item => item[0]);
                 const data = sortedCategories.map(item => item[1]);
                 const total = data.reduce((acc, val) => acc + val, 0);
+                const backgroundColors = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#6f42c1', '#fd7e14', '#20c9a6'];
 
-                const backgroundColors = [
-                    '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
-                    '#858796', '#6f42c1', '#fd7e14', '#20c9a6'
-                ];
-
-                if (chart) {
-                    chart.destroy();
-                }
-
+                if (chart) { chart.destroy(); }
                 chart = new Chart(pieChartCanvas, {
                     type: 'pie',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            data: data,
-                            backgroundColor: backgroundColors,
-                            hoverOffset: 4,
-                            borderWidth: 1
-                        }]
-                    },
+                    data: { labels: labels, datasets: [{ data: data, backgroundColor: backgroundColors, hoverOffset: 4, borderWidth: 1 }] },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
+                        responsive: true, maintainAspectRatio: false,
                         plugins: {
                             legend: { display: false },
                             tooltip: {
@@ -639,16 +444,10 @@
                                         const label = context.label || '';
                                         const value = context.raw || 0;
                                         const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
-                                        return [
-                                            `${label}`,
-                                            `金額: NT$ ${Math.round(value).toLocaleString()}`,
-                                            `佔比: ${percentage}%`
-                                        ];
+                                        return [`${label}`, `金額: NT$ ${Math.round(value).toLocaleString()}`, `佔比: ${percentage}%`];
                                     }
                                 },
-                                bodyFont: { size: 14 },
-                                padding: 10,
-                                boxPadding: 5,
+                                bodyFont: { size: 14 }, padding: 10, boxPadding: 5,
                             }
                         }
                     }
@@ -658,13 +457,9 @@
             function handleCardClick(e) {
                 const card = e.target.closest('.item-card');
                 if (!card) return;
-
-                if(e.target.matches('input, label, .quantity-wrapper, .quantity-wrapper *')) {
-                    return;
-                }
-
+                if(e.target.matches('input, label, .quantity-wrapper, .quantity-wrapper *')) { return; }
                 const link = card.dataset.link;
-                if (link && link !== 'https://example.com/...') {
+                if (link) {
                     const isMobile = window.innerWidth <= 768;
                     if (isMobile) {
                         if (confirm('您即將離開本頁前往外部網站，是否繼續？')) {
@@ -680,62 +475,112 @@
                 const adults = parseInt(adultsInput.value) || 0;
                 const children = parseInt(childrenInput.value) || 0;
                 const days = parseInt(daysInput.value) || 0;
-                
-                if (days <= 0) {
-                    alert('儲備天數必須大於 0');
-                    return;
-                }
+                if (days <= 0) { alert('儲備天數必須大於 0'); return; }
 
                 const totalWaterNeedPerDay = (adults * 2.5) + (children * 2.5 * 0.5);
                 const totalFoodNeedPerDay = (adults * 2500) + (children * 2500 * 0.5);
                 
                 PRODUCT_DATA.forEach((item, index) => {
-                    const quantityInput = document.getElementById(`qty-${index}`);
-                    let requiredUnits = 0;
-                    
-                    if (item.category === "1濾水與儲水" && item.water_supply_days > 0) {
-                         const waterSupplyPerUnitInLiters = item.water_supply_days * 2.5;
-                         const totalLitersNeeded = totalWaterNeedPerDay * days;
-                         if (waterSupplyPerUnitInLiters > 0) {
-                            requiredUnits = Math.ceil(totalLitersNeeded / waterSupplyPerUnitInLiters);
-                         }
-                    } else if (item.category === "2長效期糧食" && item.food_supply_days > 0) {
-                         const foodSupplyPerUnitInKcal = item.food_supply_days * 2500;
-                         const totalKcalNeeded = totalFoodNeedPerDay * days;
-                         if (foodSupplyPerUnitInKcal > 0) {
-                            requiredUnits = Math.ceil(totalKcalNeeded / foodSupplyPerUnitInKcal);
-                         }
-                    }
-                    
-                    if (requiredUnits > 0) {
-                        quantityInput.value = requiredUnits;
+                    // *** NEW LOGIC: Only calculate for main supply items ***
+                    if (item.is_main_supply) {
+                        const quantityInput = document.getElementById(`qty-${index}`);
+                        let requiredUnits = 0;
+                        if (item.category === "1濾水與儲水" && item.water_supply_days > 0) {
+                             const waterSupplyPerUnitInLiters = item.water_supply_days * 2.5;
+                             const totalLitersNeeded = totalWaterNeedPerDay * days;
+                             if (waterSupplyPerUnitInLiters > 0) { requiredUnits = Math.ceil(totalLitersNeeded / waterSupplyPerUnitInLiters); }
+                        } else if (item.category === "2長效期糧食" && item.food_supply_days > 0) {
+                             const foodSupplyPerUnitInKcal = item.food_supply_days * 2500;
+                             const totalKcalNeeded = totalFoodNeedPerDay * days;
+                             if (foodSupplyPerUnitInKcal > 0) { requiredUnits = Math.ceil(totalKcalNeeded / foodSupplyPerUnitInKcal); }
+                        }
+                        if (requiredUnits > 0) {
+                            quantityInput.value = requiredUnits;
+                        }
                     }
                 });
                 updateSummaries();
             }
             
-            // Event Listeners
-            itemsContainer.addEventListener('change', (e) => {
-                if (e.target.matches('.item-checkbox, .quantity-input')) {
-                    updateSummaries();
-                }
+            window.addEventListener('scroll', () => {
+                backToTopBtn.style.display = (window.scrollY > 300) ? 'flex' : 'none';
             });
-            
+
+            fabPdf.addEventListener('click', () => {
+                const element = document.getElementById('page-content');
+                const opt = {
+                    margin: 0.5, filename: '家庭防災包規劃清單.pdf', image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+                };
+                html2pdf().from(element).set(opt).save();
+            });
+
+            fabSave.addEventListener('click', () => {
+                const saveData = {
+                    inputs: { adults: adultsInput.value, children: childrenInput.value, days: daysInput.value },
+                    items: []
+                };
+                PRODUCT_DATA.forEach((item, index) => {
+                    saveData.items.push({
+                        id: item.id,
+                        quantity: document.getElementById(`qty-${index}`).value,
+                        checked: document.getElementById(`check-${index}`).checked
+                    });
+                });
+                const blob = new Blob([JSON.stringify(saveData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = '防災包紀錄檔.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            fabLoad.addEventListener('click', () => { fileLoader.click(); });
+
+            fileLoader.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const loadedData = JSON.parse(e.target.result);
+                        adultsInput.value = loadedData.inputs.adults || 2;
+                        childrenInput.value = loadedData.inputs.children || 1;
+                        daysInput.value = loadedData.inputs.days || 14;
+                        loadedData.items.forEach(itemState => {
+                            const qtyInput = document.getElementById(`qty-${itemState.id.split('-')[1]}`);
+                            const checkInput = document.getElementById(`check-${itemState.id.split('-')[1]}`);
+                            if(qtyInput) qtyInput.value = itemState.quantity;
+                            if(checkInput) checkInput.checked = itemState.checked;
+                        });
+                        updateSummaries();
+                        alert('紀錄檔已成功載入！');
+                    } catch (error) {
+                        alert('載入失敗，檔案格式錯誤。');
+                        console.error("Error parsing JSON:", error);
+                    }
+                };
+                reader.readAsText(file);
+                event.target.value = '';
+            });
+
+            itemsContainer.addEventListener('change', (e) => {
+                if (e.target.matches('.item-checkbox, .quantity-input')) { updateSummaries(); }
+            });
             itemsContainer.addEventListener('click', handleCardClick);
-
             calculateBtn.addEventListener('click', calculateQuantities);
-
             selectAllBtn.addEventListener('click', () => {
                 document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = true);
                 updateSummaries();
             });
-
             deselectAllBtn.addEventListener('click', () => {
                 document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = false);
                 updateSummaries();
             });
 
-            // Initial setup
             initializeCards();
             renderCategorySummary();
             updateSummaries();
