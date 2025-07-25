@@ -1,4 +1,5 @@
 
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
@@ -313,53 +314,53 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // ===================================================================================
-            // DATA SOURCE - ACCURATELY PARSED FROM YOUR SPREADSHEET IMAGE (v3)
+            // DATA SOURCE - Based on your latest corrections
             // ===================================================================================
             const PRODUCT_DATA = [
                 // 1濾水與儲水
-                { "category": "1濾水與儲水", "name": "日本MochiGoo PET材質可折疊水壺袋(8公升容量)", "notes": "PET材質水溫建議不超過60攝氏度", "price": 147, "link": "https://tw.shp.ee/5nuoRdJ", "food_supply_days": 0, "water_supply_days": 3.2, "is_main_supply": false },
-                { "category": "1濾水與儲水", "name": "美國Katadyn Micropur MP1過濾隱孢蟲藥錠(一盒30顆)", "notes": "[5年] 每盒30顆，每顆可處理1公升汙水，需靜置1~4小時", "price": 638, "link": "https://tw.shp.ee/jd5s5j3", "food_supply_days": 0, "water_supply_days": 12, "is_main_supply": false },
-                { "category": "1濾水與儲水", "name": "美國LifeStrawPeak個人隨身濾水器4,000公升(平裝版包裝)", "notes": "品牌聲譽高，過濾效果在非洲等地區經過考驗", "price": 810, "link": "https://tw.shp.ee/KceBiia", "food_supply_days": 0, "water_supply_days": 1600, "is_main_supply": true }, // Main Water Supply
-                { "category": "1濾水與儲水", "name": "美國P&G Water Purifier濾水粉(一盒12包)", "notes": "[3年] 每盒12包，每包可處理10公升汙水，需靜置1~4小時", "price": 764, "link": "", "food_supply_days": 0, "water_supply_days": 96, "is_main_supply": false },
-                { "category": "1濾水與儲水", "name": "美國Portable Aqua淨水錠(一組2瓶消毒與去味)", "notes": "[4年] 一組2瓶=50顆淨水錠+50顆除味錠，可處理25公升汙水", "price": 294, "link": "https://tw.shp.ee/JWw2V9M", "food_supply_days": 0, "water_supply_days": 10, "is_main_supply": false },
-                { "category": "1濾水與儲水", "name": "美國WaterBOB浴缸軟性儲水袋", "notes": "最大可儲存100加侖=378公升，依照浴缸大小決定", "price": 2200, "link": "https://tw.shp.ee/FfHYWbi", "food_supply_days": 0, "water_supply_days": 151.2, "is_main_supply": true },
+                { "category": "1濾水與儲水", "name": "日本MochiGoo PET材質可折疊水壺袋(8公升容量)", "notes": "PET材質水溫建議不超過60攝氏度", "price": 147, "link": "https://tw.shp.ee/5nuoRdJ", "capacity_kcal": 0, "capacity_liters": 8, "calc_method": "total_need" },
+                { "category": "1濾水與儲水", "name": "美國Katadyn Micropur MP1過濾隱孢蟲藥錠(一盒30顆)", "notes": "[5年] 每盒30顆，每顆可處理1公升汙水，需靜置1~4小時", "price": 638, "link": "https://tw.shp.ee/jd5s5j3", "capacity_kcal": 0, "capacity_liters": 30, "calc_method": "total_need" },
+                { "category": "1濾水與儲水", "name": "美國LifeStrawPeak個人隨身濾水器4,000公升(平裝版包裝)", "notes": "品牌聲譽高，過濾效果在非洲等地區經過考驗", "price": 810, "link": "https://tw.shp.ee/KceBiia", "capacity_kcal": 0, "capacity_liters": 4000, "calc_method": "per_person" },
+                { "category": "1濾水與儲水", "name": "美國P&G Water Purifier濾水粉(一盒12包)", "notes": "[3年] 每盒12包，每包可處理10公升汙水，需靜置1~4小時", "price": 764, "link": "", "capacity_kcal": 0, "capacity_liters": 120, "calc_method": "total_need" },
+                { "category": "1濾水與儲水", "name": "美國Portable Aqua淨水錠(一組2瓶消毒與去味)", "notes": "[4年] 一組2瓶=50顆淨水錠+50顆除味錠，可處理25公升汙水", "price": 294, "link": "https://tw.shp.ee/JWw2V9M", "capacity_kcal": 0, "capacity_liters": 25, "calc_method": "total_need" },
+                { "category": "1濾水與儲水", "name": "美國WaterBOB浴缸軟性儲水袋", "notes": "最大可儲存100加侖=378公升，依照浴缸大小決定", "price": 2200, "link": "https://tw.shp.ee/FfHYWbi", "capacity_kcal": 0, "capacity_liters": 378, "calc_method": "total_need" },
                 
                 // 2長效期糧食
-                { "category": "2長效期糧食", "name": "日本Satake乾燥飯", "notes": "[5年] 有多種口味，每包350大卡，冷水20~30分鐘，熱水3~5分鐘", "price": 197, "link": "https://tw.shp.ee/u3Ef7Jc", "food_supply_days": 0.14, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "2長效期糧食", "name": "美國SurvivalTabs口嚼片香草口味(一袋24顆，多2天存活)", "notes": "[25年] 一袋24顆，合計480大卡，供2日最低生存需求，輕巧便攜，不建議當成標準糧食", "price": 561, "link": "https://tw.shp.ee/W1LnMkN", "food_supply_days": 0.192, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "2長效期糧食", "name": "德國NRG-5棕褐色包裝(非素食)緊急乾糧", "notes": "[20年] 500克一份，供應2,300大卡，70公斤男性一日所需，聽說味道普通", "price": 890, "link": "https://tw.shp.ee/FfHYWbi", "food_supply_days": 0.952, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "2長效期糧食", "name": "德國POW-R1緊急乾糧(1盒建議當成半天主食)", "notes": "[20年] 250克一份，供應1,250大卡，70公斤男性半天所需，聽說算好吃", "price": 280, "link": "https://tw.shp.ee/zTYzfTq", "food_supply_days": 0.5, "water_supply_days": 0, "is_main_supply": true }, // Main Food Supply
+                { "category": "2長效期糧食", "name": "日本Satake乾燥飯", "notes": "[5年] 有多種口味，每包350大卡，冷水20~30分鐘，熱水3~5分鐘", "price": 197, "link": "https://tw.shp.ee/u3Ef7Jc", "capacity_kcal": 350, "capacity_liters": 0, "calc_method": "per_person" },
+                { "category": "2長效期糧食", "name": "美國SurvivalTabs口嚼片香草口味(一袋24顆，多2天存活)", "notes": "[25年] 一袋24顆，合計480大卡，供2日最低生存需求，輕巧便攜，不建議當成標準糧食", "price": 561, "link": "https://tw.shp.ee/W1LnMkN", "capacity_kcal": 480, "capacity_liters": 0, "calc_method": "per_person" },
+                { "category": "2長效期糧食", "name": "德國NRG-5棕褐色包裝(非素食)緊急乾糧", "notes": "[20年] 500克一份，供應2,300大卡，70公斤男性一日所需，聽說味道普通", "price": 890, "link": "https://tw.shp.ee/FfHYWbi", "capacity_kcal": 2300, "capacity_liters": 0, "calc_method": "per_person" },
+                { "category": "2長效期糧食", "name": "德國POW-R1緊急乾糧(1盒建議當成半天主食)", "notes": "[20年] 250克一份，供應1,250大卡，70公斤男性半天所需，聽說算好吃", "price": 280, "link": "https://tw.shp.ee/zTYzfTq", "capacity_kcal": 1250, "capacity_liters": 0, "calc_method": "total_need" },
                 
                 // 3衛生與醫療
-                { "category": "3衛生與醫療", "name": "日本Osaki大崎防災用柔濕巾(一包7枚)", "notes": "[7年] 擦拭全身的超大型濕紙巾捲", "price": 185, "link": "https://tw.shp.ee/QXzGExJ", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "3衛生與醫療", "name": "日本緊急拋棄式廁所(一盒30份)", "notes": "[15年] 高分子聚合物粉末，將排泄物與尿凝固與消臭", "price": 975, "link": "https://tw.shp.ee/w4kthoZ", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "3衛生與醫療", "name": "口服用藥品", "notes": "普拿疼、腸胃藥、感冒藥…", "price": 883, "link": "", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "3衛生與醫療", "name": "傷口處理藥品", "notes": "抗生素軟膏、消毒液(氯己定噴霧消毒劑)、碘液、多尺寸滅菌彈性繃帶、滅菌大頭棉棒…", "price": 677, "link": "", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "3衛生與醫療", "name": "簡易尿袋", "notes": "--", "price": 79, "link": "", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "3衛生與醫療", "name": "日本Osaki大崎防災用柔濕巾(一包7枚)", "notes": "[7年] 擦拭全身的超大型濕紙巾捲", "price": 185, "link": "https://tw.shp.ee/QXzGExJ", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": "daily_use", "units_per_item": 7 },
+                { "category": "3衛生與醫療", "name": "日本緊急拋棄式廁所(一盒30份)", "notes": "[15年] 高分子聚合物粉末，將排泄物與尿凝固與消臭", "price": 975, "link": "https://tw.shp.ee/w4kthoZ", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": "daily_use", "units_per_item": 30 },
+                { "category": "3衛生與醫療", "name": "口服用藥品", "notes": "普拿疼、腸胃藥、感冒藥…", "price": 883, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
+                { "category": "3衛生與醫療", "name": "傷口處理藥品", "notes": "抗生素軟膏、消毒液(氯己定噴霧消毒劑)、碘液、多尺寸滅菌彈性繃帶、滅菌大頭棉棒…", "price": 677, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
+                { "category": "3衛生與醫療", "name": "德國H&H Medical迷你壓縮紗布", "notes": "900元是一捆(6入)，700元是單片，兩者皆為醫療級紗布", "price": 880, "link": "https://reurl.cc/...", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
                 
                 // 4保暖與衣物
-                { "category": "4保暖與衣物", "name": "台灣ADISI防水防撕裂睡袋+ADISI輕旅保潔睡袋", "notes": "--", "price": 460, "link": "https://tw.shp.ee/KceBiia", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "4保暖與衣物", "name": "台灣ADISI防水防撕裂睡袋+ADISI輕旅保潔睡袋", "notes": "--", "price": 460, "link": "https://tw.shp.ee/KceBiia", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
                 
                 // 5能源與燃料
-                { "category": "5能源與燃料", "name": "[搜尋中]單晶矽太陽能充電板", "notes": "搜尋中...為了安全性將以日本、台灣、歐美國品牌為目標", "price": 0, "link": "", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "5能源與燃料", "name": "[搜尋中]磷酸鐵鋰移動電站(LiFePO4)", "notes": "搜尋中...為了安全性將以日本、台灣、歐美國品牌為目標", "price": 0, "link": "", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "5能源與燃料", "name": "日本Panasonic Evolta長效鹼性電池", "notes": "[10年] 包含：3號AA與4號AAA電池", "price": 807, "link": "https://tw.shp.ee/vbbukfA", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "5能源與燃料", "name": "美國CampMaid固體精密火種(一盒12顆裝)", "notes": "每塊可以燃燒12分鐘，推薦搭配可放置固體或液態燃料的美國Vargo鈦金屬小爐具VT305", "price": 69, "link": "https://tw.shp.ee/qVHMQgy", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "5能源與燃料", "name": "美國電弧點火器兼防水LED手電筒", "notes": "mini-USB充電口", "price": 790, "link": "https://tw.shp.ee/FfHYWbi", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "5能源與燃料", "name": "[搜尋中]單晶矽太陽能充電板", "notes": "搜尋中...為了安全性將以日本、台灣、歐美國品牌為目標", "price": 0, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
+                { "category": "5能源與燃料", "name": "[搜尋中]磷酸鐵鋰移動電站(LiFePO4)", "notes": "搜尋中...為了安全性將以日本、台灣、歐美國品牌為目標", "price": 0, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
+                { "category": "5能源與燃料", "name": "日本Panasonic Evolta長效鹼性電池", "notes": "[10年] 包含：3號AA與4號AAA電池", "price": 807, "link": "https://tw.shp.ee/vbbukfA", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
+                { "category": "5能源與燃料", "name": "美國CampMaid固體精密火種(一盒12顆裝)", "notes": "每塊可以燃燒12分鐘，推薦搭配可放置固體或液態燃料的美國Vargo鈦金屬小爐具VT305", "price": 69, "link": "https://tw.shp.ee/qVHMQgy", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
+                { "category": "5能源與燃料", "name": "美國電弧點火器兼防水LED手電筒", "notes": "mini-USB充電口", "price": 790, "link": "https://tw.shp.ee/FfHYWbi", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
                 
                 // 6通訊
-                { "category": "6通訊", "name": "台灣ADV-AD3免執照無線電對講機(2支一組)", "notes": "免考取台灣NCC業餘無線電執照，較高功率的機種會被沒收與罰款", "price": 2514, "link": "https://tw.shp.ee/trpb5UN", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "6通訊", "name": "台灣ADV-AD3免執照無線電對講機(2支一組)", "notes": "免考取台灣NCC業餘無線電執照，較高功率的機種會被沒收與罰款", "price": 2514, "link": "https://tw.shp.ee/trpb5UN", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
                 
                 // 7防火逃生
-                { "category": "7防火逃生", "name": "台灣寧威防煙頭罩", "notes": "[5年] 大約耐熱500度", "price": 367, "link": "https://tw.shp.ee/6A6iFpk", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "7防火逃生", "name": "台灣寧威防煙頭罩", "notes": "[5年] 大約耐熱500度", "price": 367, "link": "https://tw.shp.ee/6A6iFpk", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": "per_person" },
                 
                 // 8基礎綜合
-                { "category": "8基礎綜合", "name": "防災用品(包含：保溫鋁箔毯、醫療剪刀、IFAK快速反應包、德國BH-580乾糧*)", "notes": "鋪地、覆蓋、破損替換，建議每人至少2張", "price": 1760, "link": "https://jingpinyuan.tw/product.php", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "8基礎綜合", "name": "避難防災包搭配(包含：戰術大防災包、德國POW-R1乾糧*、太陽能充電收音機…)", "notes": "基本品項詳閱京品源網站", "price": 5589, "link": "https://jingpinyuan.tw/product.php", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "8基礎綜合", "name": "避難防災包搭配(包含：美國戰術止血帶、防身噴劑、破窗器、可摺水壺含濾嘴*、EDC隨身側背包...)", "notes": "止血帶x3、可彎曲水壺x2、[2年] 濾嘴可過濾1,000公升x5、防身噴劑兼破窗器x2", "price": 14530, "link": "https://kuma-academy.org/", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "8基礎綜合", "name": "防災用品(包含：保溫鋁箔毯、醫療剪刀、IFAK快速反應包、德國BH-580乾糧*)", "notes": "鋪地、覆蓋、破損替換，建議每人至少2張", "price": 1760, "link": "https://jingpinyuan.tw/product.php", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
+                { "category": "8基礎綜合", "name": "避難防災包搭配(包含：戰術大防災包、德國POW-R1乾糧*、太陽能充電收音機…)", "notes": "基本品項詳閱京品源網站", "price": 5589, "link": "https://jingpinyuan.tw/product.php", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
+                { "category": "8基礎綜合", "name": "避難防災包搭配(包含：美國戰術止血帶、防身噴劑、破窗器、可摺水壺含濾嘴*、EDC隨身側背包...)", "notes": "止血帶x3、可彎曲水壺x2、[2年] 濾嘴可過濾1,000公升x5、防身噴劑兼破窗器x2", "price": 14530, "link": "https://kuma-academy.org/", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
                 
                 // 9其他
-                { "category": "9其他", "name": "中國Keith鈦金屬筷子+日本MontBell鈦金屬叉匙", "notes": "中國Keith鈦金屬筷子(560)+日本MontBell鈦金屬叉匙(465)-蝦幣折扣", "price": 762, "link": "https://tw.shp.ee/qVHMQgy", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false }
+                { "category": "9其他", "name": "中國Keith鈦金屬筷子+日本MontBell鈦金屬叉匙", "notes": "中國Keith鈦金屬筷子(560)+日本MontBell鈦金屬叉匙(465)-蝦幣折扣", "price": 762, "link": "https://tw.shp.ee/qVHMQgy", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": "per_person" }
             ];
             // ===================================================================================
             // END OF DATA SOURCE
@@ -524,21 +525,36 @@
                 const totalFoodNeedPerDay = (adults * 2500) + (children * 2500 * 0.5);
                 
                 PRODUCT_DATA.forEach((item, index) => {
-                    if (item.is_main_supply) {
-                        const quantityInput = document.getElementById(`qty-${index}`);
-                        let requiredUnits = 0;
-                        if (item.category === "1濾水與儲水" && item.water_supply_days > 0) {
-                             const waterSupplyPerUnitInLiters = item.water_supply_days * 2.5;
-                             const totalLitersNeeded = totalWaterNeedPerDay * days;
-                             if (waterSupplyPerUnitInLiters > 0) { requiredUnits = Math.ceil(totalLitersNeeded / waterSupplyPerUnitInLiters); }
-                        } else if (item.category === "2長效期糧食" && item.food_supply_days > 0) {
-                             const foodSupplyPerUnitInKcal = item.food_supply_days * 2500;
-                             const totalKcalNeeded = totalFoodNeedPerDay * days;
-                             if (foodSupplyPerUnitInKcal > 0) { requiredUnits = Math.ceil(totalKcalNeeded / foodSupplyPerUnitInKcal); }
-                        }
-                        if (requiredUnits > 0) {
-                            quantityInput.value = requiredUnits;
-                        }
+                    const quantityInput = document.getElementById(`qty-${index}`);
+                    let requiredUnits = 0;
+                    
+                    switch (item.calc_method) {
+                        case 'per_person':
+                            requiredUnits = adults + children;
+                            break;
+                        case 'total_need':
+                            if (item.category === "1濾水與儲水" && item.capacity_liters > 0) {
+                                const totalLitersNeeded = totalWaterNeedPerDay * days;
+                                requiredUnits = Math.ceil(totalLitersNeeded / item.capacity_liters);
+                            } else if (item.category === "2長效期糧食" && item.capacity_kcal > 0) {
+                                const totalKcalNeeded = totalFoodNeedPerDay * days;
+                                requiredUnits = Math.ceil(totalKcalNeeded / item.capacity_kcal);
+                            }
+                            break;
+                        case 'daily_use':
+                            if (item.units_per_item > 0) {
+                                const totalPeople = adults + children;
+                                const totalDaysOfUse = totalPeople * days;
+                                requiredUnits = Math.ceil(totalDaysOfUse / item.units_per_item);
+                            }
+                            break;
+                        default:
+                            // For items with calc_method: null, do nothing and keep the default value.
+                            break;
+                    }
+
+                    if (requiredUnits > 0) {
+                        quantityInput.value = requiredUnits;
                     }
                 });
                 updateSummaries();
