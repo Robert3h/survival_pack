@@ -1,5 +1,4 @@
 
-
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
@@ -169,7 +168,7 @@
     <div id="page-content">
         <section class="section section-a">
             <div class="container">
-                <h1>若飛機未來可能下墜，你要等別人遞給你降落傘？還是現在，就為自己準備一把？！</h1>
+                <h1>若飛機未來可能下墜，你要等別人遞降落傘？還是現在，就為自己準備一把？！</h1>
                 <h1>一起準備防災包表達對家庭的愛！</h1>
             </div>
         </section>
@@ -203,7 +202,8 @@
                 <h2>防災包建議清單</h2>
                 <h3 class="text-blue">「準備不完全，也勝過完全不準備」— 這一份我為家庭準備的防災包清單，希望能為您提供一些準備時的參考。</h3>
                 <h3 class="text-left">依照人體生存所需的優先順序排列，從1~9依序排列與分類：依序是：</h3>
-                <h3 class="text-left">"1濾水與儲水", "2長效期糧食", "3衛生與醫療", "4保暖與衣物", "5能源與燃料", "6通訊", "7防火逃生", "8基礎綜合", "9其他"。</h3>
+                <h3 class="text-left">"1濾水與儲水", "2長效期糧食", "3衛生與醫療", "4保暖與衣物", </h3>
+                <h3 class="text-left">"5能源與燃料", "6通訊", "7防火逃生", "8基礎綜合", "9其他"。</h3>
                 
             </div>
         </section>
@@ -221,7 +221,7 @@
             <div class="container">
                 <h2>依人數與天數預估數量</h2>
                 <h3 class="text-left">請輸入家庭成員人數與預估儲備天數，系統將自動計算「濾水與儲水」及「長效期糧食」的建議數量。</h3>
-                <h3 class="text-left">注意：其他類別品項數量需手動調整。</h3>
+                <h3 class="text-left">注意：「長效期糧食」目前以德國製POW-R1為主力，其他類別品項數量需自行手動調整。</h3>
                 <div class="calculator-wrapper">
                     <div class="input-group">
                         <i class="fas fa-user"></i>
@@ -318,24 +318,25 @@
             const PRODUCT_DATA = [
                 // 1濾水與儲水
                 { "category": "1濾水與儲水", "name": "日本MochiGoo PET材質可折疊水壺袋(8公升容量)", "notes": "PET材質水溫建議不超過60攝氏度", "price": 147, "link": "https://tw.shp.ee/5nuoRdJ", "food_supply_days": 0, "water_supply_days": 3.2, "is_main_supply": false },
-                { "category": "1濾水與儲水", "name": "美國Katadyn Micropur MP1過濾隱孢蟲藥錠(一盒30顆)", "notes": "每盒30顆，每顆可處理1公升汙水，需靜置1~4小時", "price": 638, "link": "https://tw.shp.ee/jd5s5j3", "food_supply_days": 0, "water_supply_days": 12, "is_main_supply": false },
+                { "category": "1濾水與儲水", "name": "美國Katadyn Micropur MP1過濾隱孢蟲藥錠(一盒30顆)", "notes": "[5年] 每盒30顆，每顆可處理1公升汙水，需靜置1~4小時", "price": 638, "link": "https://tw.shp.ee/jd5s5j3", "food_supply_days": 0, "water_supply_days": 12, "is_main_supply": false },
                 { "category": "1濾水與儲水", "name": "美國LifeStrawPeak個人隨身濾水器4,000公升(平裝版包裝)", "notes": "品牌聲譽高，過濾效果在非洲等地區經過考驗", "price": 810, "link": "https://reurl.cc/QRQW2p", "food_supply_days": 0, "water_supply_days": 1600, "is_main_supply": true }, // Main Water Supply
-                { "category": "1濾水與儲水", "name": "美國P&G Water Purifier濾水粉(一盒12包)", "notes": "每盒12包，每包可處理10公升汙水，需靜置1~4小時", "price": 764, "link": "https://reurl.cc/krzgEd", "food_supply_days": 0, "water_supply_days": 96, "is_main_supply": false },
-                { "category": "1濾水與儲水", "name": "美國Portable Aqua淨水錠(一組2瓶消毒與去味)", "notes": "一組2瓶=50顆淨水錠+50顆除味錠，可處理25公升汙水", "price": 294, "link": "https://reurl.cc/ezEaNK", "food_supply_days": 0, "water_supply_days": 10, "is_main_supply": false },
-                { "category": "1濾水與儲水", "name": "美國WaterBOB浴缸軟性儲水袋", "notes": "最大可儲存100加侖=378公升，依照浴缸大小決定", "price": 2200, "link": "https://reurl.cc/oRzQYQ", "food_supply_days": 0, "water_supply_days": 151.2, "is_main_supply": false },
+                { "category": "1濾水與儲水", "name": "美國P&G Water Purifier濾水粉(一盒12包)", "notes": "[3年] 每盒12包，每包可處理10公升汙水，需靜置1~4小時", "price": 764, "link": "https://reurl.cc/krzgEd", "food_supply_days": 0, "water_supply_days": 96, "is_main_supply": false },
+                { "category": "1濾水與儲水", "name": "美國Portable Aqua淨水錠(一組2瓶消毒與去味)", "notes": "[4年] 一組2瓶=50顆淨水錠+50顆除味錠，可處理25公升汙水", "price": 294, "link": "https://reurl.cc/ezEaNK", "food_supply_days": 0, "water_supply_days": 10, "is_main_supply": false },
+                { "category": "1濾水與儲水", "name": "美國WaterBOB浴缸軟性儲水袋", "notes": "最大可儲存100加侖=378公升，依照浴缸大小決定", "price": 2200, "link": "https://reurl.cc/oRzQYQ", "food_supply_days": 0, "water_supply_days": 151.2, "is_main_supply": true },
                 
                 // 2長效期糧食
-                { "category": "2長效期糧食", "name": "日本Satake乾燥飯", "notes": "有多種口味，每包350大卡，冷水20~30分鐘，熱水3~5分鐘", "price": 197, "link": "https://reurl.cc/OMQWvR", "food_supply_days": 0.14, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "2長效期糧食", "name": "美國SurvivalTabs口嚼片香草口味(一袋24顆，多2天存活)", "notes": "一袋24顆，合計480大卡，供2日最低生存需求，輕巧便攜，不建議當成標準糧食", "price": 561, "link": "https://reurl.cc/bVzM5d", "food_supply_days": 0.192, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "2長效期糧食", "name": "德國POW-R1緊急乾糧(1盒建議當成半天主食)", "notes": "250克一份，供應1,250大卡，70公斤男性半天所需，聽說算好吃", "price": 280, "link": "https://reurl.cc/VzdaWy", "food_supply_days": 0.5, "water_supply_days": 0, "is_main_supply": true }, // Main Food Supply
-                { "category": "2長效期糧食", "name": "日本Osaki防災用冷凍乾燥飯(一包7枚)", "notes": "類似全球的綜合大型壓縮口糧", "price": 975, "link": "https://reurl.cc/p3R9a4", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "2長效期糧食", "name": "日本Satake乾燥飯", "notes": "[5年] 有多種口味，每包350大卡，冷水20~30分鐘，熱水3~5分鐘", "price": 197, "link": "https://reurl.cc/OMQWvR", "food_supply_days": 0.14, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "2長效期糧食", "name": "美國SurvivalTabs口嚼片香草口味(一袋24顆，多2天存活)", "notes": "[25年] 一袋24顆，合計480大卡，供2日最低生存需求，輕巧便攜，不建議當成標準糧食", "price": 561, "link": "https://reurl.cc/bVzM5d", "food_supply_days": 0.192, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "2長效期糧食", "name": "德國NRG-5棕褐色包裝(非素食)緊急乾糧", "notes": "[20年] 500克一份，供應2,300大卡，70公斤男性一日所需，聽說味道普通", "price": 890, "link": "https://tw.shp.ee/FfHYWbi", "food_supply_days": 0.952, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "2長效期糧食", "name": "德國POW-R1緊急乾糧(1盒建議當成半天主食)", "notes": "[20年] 250克一份，供應1,250大卡，70公斤男性半天所需，聽說算好吃", "price": 280, "link": "https://reurl.cc/VzdaWy", "food_supply_days": 0.5, "water_supply_days": 0, "is_main_supply": true }, // Main Food Supply
                 
                 // 3衛生與醫療
-                { "category": "3衛生與醫療", "name": "日本藍色防水OK繃(30枚)", "notes": "國軍分子醫合物輸血，將抽換民間常用OK繃", "price": 185, "link": "https://reurl.cc/EjQW1m", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "3衛生與醫療", "name": "衛生套數個", "notes": "註冊藥商合格品", "price": 180, "link": "https://reurl.cc/NQmGg6", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "3衛生與醫療", "name": "第一類常備用藥品", "notes": "註冊藥品合格品(外盒含：感冒藥、腸胃藥、痠痛藥...)", "price": 883, "link": "https://reurl.cc/NQmGg6", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "3衛生與醫療", "name": "傷口護理藥品", "notes": "註冊藥品合格品(外盒含：消毒(淋濕已滅菌棉纖維)、藥膏、紗布、彈性繃帶、滅菌貼布)", "price": 497, "link": "https://reurl.cc/NQmGg6", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
-                { "category": "3衛生與醫療", "name": "醫療口罩(1包4個)", "notes": "--", "price": 79, "link": "https://reurl.cc/NQmGg6", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "3衛生與醫療", "name": "日本Osaki大崎防災用柔濕巾(一包7枚)", "notes": "[7年] 擦拭全身的超大型濕紙巾捲", "price": 185, "link": "https://tw.shp.ee/QXzGExJ", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "3衛生與醫療", "name": "日本緊急拋棄式廁所(一盒30份)", "notes": "[15年] 高分子聚合物粉末，將排泄物與尿凝固與消臭", "price": 975, "link": "https://tw.shp.ee/w4kthoZ", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                   { "category": "3衛生與醫療", "name": "衛生套數個", "notes": "註冊藥商合格品", "price": 180, "link": "https://reurl.cc/NQmGg6", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "3衛生與醫療", "name": "口服用藥品", "notes": "普拿疼、腸胃藥、感冒藥…", "price": 883, "link": "", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "3衛生與醫療", "name": "傷口處理藥品", "notes": "抗生素軟膏、消毒液(氯己定噴霧消毒劑)、碘液、多尺寸滅菌彈性繃帶、滅菌大頭棉棒…", "price": 677, "link": "", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
+                { "category": "3衛生與醫療", "name": "簡易尿袋", "notes": "--", "price": 79, "link": "", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
                 
                 // 4保暖與衣物
                 { "category": "4保暖與衣物", "name": "台灣ADISI防水防撕裂睡袋+ADISI輕旅保潔睡袋", "notes": "--", "price": 460, "link": "https://reurl.cc/D4gQNE", "food_supply_days": 0, "water_supply_days": 0, "is_main_supply": false },
