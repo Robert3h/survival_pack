@@ -129,6 +129,67 @@
         .download-excel-wrapper h3 { margin: 0; flex-grow: 1; }
         .download-btn { background-color: #1D6F42; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 10px; transition: background-color 0.3s; }
         .download-btn:hover { background-color: #185C37; }
+        
+        /* Calculation Logic Info Box */
+        .calculation-logic-info {
+            text-align: left;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px 25px;
+            margin-bottom: 2em;
+            font-size: 0.95rem;
+        }
+        .calculation-logic-info h4 {
+            margin-top: 0;
+            color: var(--color-dark-grey);
+        }
+        .calculation-logic-info ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 10px 0;
+        }
+        .calculation-logic-info li {
+            margin-bottom: 0.5em;
+        }
+        .calculation-logic-info li i {
+            margin-right: 10px;
+            color: var(--color-secondary);
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Quantity Info Icon & Tooltip */
+        .quantity-info-icon {
+            margin-left: 5px;
+            color: #aaa;
+            cursor: help;
+            position: relative;
+        }
+        .quantity-info-icon .quantity-tooltip {
+            visibility: hidden;
+            width: 220px;
+            background-color: rgba(0,0,0,0.8);
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 150%; /* Position above the icon */
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+            font-weight: normal;
+            white-space: nowrap;
+        }
+        .quantity-info-icon:hover .quantity-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
 
         @media print {
             /* PDF FIX */
@@ -139,7 +200,7 @@
             @page { size: A4 landscape; }
             body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .section { border: none; padding: 20px 0; }
-            .fab-container, .button-group, .download-btn { display: none !important; }
+            .fab-container, .button-group, .download-btn, .calculation-logic-info { display: none !important; }
             .item-card { page-break-inside: avoid; }
             .category-summary-grid { page-break-inside: avoid; }
             .pie-chart-container { max-width: 100%; page-break-inside: avoid; }
@@ -268,6 +329,18 @@
                         <i class="fas fa-file-excel"></i> 下載 Excel 清單
                     </a>
                 </div>
+
+                <!-- NEW: Calculation Logic Info Box -->
+                <div class="calculation-logic-info">
+                    <h4>計算邏輯說明：</h4>
+                    <ul>
+                        <li><i class="fas fa-users"></i> <strong>依人頭計算</strong>：數量 = 大人數 + 小孩數。適用於個人用品 (如濾水器、補充口糧)。</li>
+                        <li><i class="fas fa-calculator"></i> <strong>依總需求計算</strong>：數量 = (總需求量 / 每份容量)，無條件進位。適用於水、主力糧食等。</li>
+                        <li><i class="fas fa-calendar-day"></i> <strong>依每日消耗計算</strong>：數量 = (總人數 * 天數 / 每份可用次數)，無條件進位。適用於濕紙巾等消耗品。</li>
+                    </ul>
+                    <p style="font-size: 0.9rem; margin-bottom: 0;">當您點擊「計算建議數量」時，部分品項的數量會依上述邏輯自動更新。數量旁的 <i class="fas fa-info-circle"></i> 圖示會提示該品項的計算方式。</p>
+                </div>
+
                 <div id="item-cards-container" class="item-cards-grid"></div>
             </div>
         </section>
@@ -413,6 +486,38 @@
                             </div>
                         `;
                     }
+                    
+                    const calcMethodTooltips = {
+                        per_person: "依據總人數 (大人+小孩) 計算",
+                        total_need_water: "依據總飲水需求計算",
+                        total_need_food: "依據總熱量需求計算",
+                        daily_use: "依據每人每日消耗量計算"
+                    };
+
+                    let quantityInfoIconHTML = '';
+                    let tooltipText = '';
+
+                    if (item.calc_method === 'per_person') {
+                        tooltipText = calcMethodTooltips.per_person;
+                    } else if (item.calc_method === 'total_need') {
+                        if (item.category === "1濾水與儲水") {
+                            tooltipText = calcMethodTooltips.total_need_water;
+                        } else {
+                            tooltipText = calcMethodTooltips.total_need_food;
+                        }
+                    } else if (item.calc_method === 'daily_use') {
+                        tooltipText = calcMethodTooltips.daily_use;
+                    }
+
+                    if (tooltipText) {
+                        quantityInfoIconHTML = `
+                            <span class="quantity-info-icon">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="quantity-tooltip">${tooltipText}</span>
+                            </span>
+                        `;
+                    }
+
 
                     card.innerHTML = `
                         <div onclick="document.getElementById('check-${index}').click();">
@@ -425,6 +530,7 @@
                             <div class="quantity-wrapper" onclick="event.stopPropagation()">
                                 <label for="qty-${index}">數量:</label>
                                 <input type="number" id="qty-${index}" class="quantity-input" value="1" min="0" data-index="${index}">
+                                ${quantityInfoIconHTML}
                             </div>
                             <div class="checkbox-wrapper" onclick="event.stopPropagation()">
                                 <input type="checkbox" id="check-${index}" class="item-checkbox" data-index="${index}">
@@ -645,4 +751,4 @@
         });
     </script>
 </body>
-</html>
+</ht
