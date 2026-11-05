@@ -5,6 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>家庭防災包規劃網頁</title>
+    <meta name="description" content="家庭防災包規劃工具：依家庭人數與天數計算飲水、食物與用品建議數量，可匯出 PDF 與儲存紀錄。">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="家庭防災包規劃網頁">
+    <meta property="og:description" content="依家庭人數與天數計算防災包建議數量，可匯出 PDF 與儲存紀錄。">
+    <meta property="og:url" content="https://robert3h.github.io/survival_pack/">
+    <meta property="og:image" content="https://robert3h.github.io/survival_pack/photo.png">
+    <meta property="og:locale" content="zh_TW">
+    <meta name="twitter:card" content="summary_large_image">
     
     <!-- Google Fonts: Noto Sans TC for Traditional Chinese -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +20,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     
     <!-- Chart.js for Pie Chart -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.6.1/dist/chart.umd.min.js"></script>
     
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -50,6 +58,7 @@
         .section { padding: 50px 0; border-bottom: 1px solid #e0e0e0; }
         .section:last-child { border-bottom: none; }
         .section-a { background: var(--gradient-hero); color: white; padding: 60px 20px; }
+        .section-a .hero-sub { font-size: 2.2rem; font-weight: 900; margin: 0.5em 0; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
         .section-b, .section-c, .section-f, .section-g, .section-h { background-color: #ffffff; }
         .section-d { background-color: var(--bg-progress); color: var(--color-primary); }
         .section-d h2 { color: var(--color-primary); }
@@ -212,8 +221,10 @@
             h1 { font-size: 1.8rem; } h2 { font-size: 1.6rem; } h3 { font-size: 1.1rem; }
             .item-cards-grid { grid-template-columns: 1fr; }
             .category-summary-grid { grid-template-columns: 1fr; }
-            .fab-container { bottom: 20px; right: 20px; }
-            .fab-button { width: 55px; height: 55px; }
+            .section-a .hero-sub { font-size: 1.8rem; }
+            .fab-container { bottom: 12px; right: 12px; gap: 8px; }
+            .fab-button { width: 44px; height: 44px; font-size: 0.95rem; }
+            body { padding-bottom: 220px; }
             /* Mobile style for intro image */
             .intro-image-container {
                 max-width: 100%;
@@ -231,7 +242,7 @@
         <section class="section section-a">
             <div class="container">
                 <h1>若飛機未來可能下墜，你要等別人遞降落傘？還是現在，就為自己準備一把？！</h1>
-                <h1>一起準備防災包表達對家庭的愛！</h1>
+                <p class="hero-sub">一起準備防災包表達對家庭的愛！</p>
             </div>
         </section>
 
