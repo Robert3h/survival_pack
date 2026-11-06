@@ -297,7 +297,7 @@
                 <h2>詳細品項與單價數量</h2>
                 <div class="download-excel-wrapper">
                     <p>詳細資訊可以下載 Excel 清單。</p>
-                    <a href="./防災包清單_20260110.xlsx" download="防災包清單_20260110.xlsx" class="download-btn">
+                    <a href="./防災包清單_20261106.xlsx" download="防災包清單_20261106.xlsx" class="download-btn">
                         <i class="fas fa-file-excel"></i> 下載 Excel 清單
                     </a>
                 </div>
@@ -362,7 +362,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // ===================================================================================
-            // DATA SOURCE - 我的家庭防災包_20260110版本.xlsx（數量與購買日期不上網頁）
+            // DATA SOURCE - 我的家庭防災包_20261106版本.xlsx（數量與購買日期不上網頁）
             // ===================================================================================
             const PRODUCT_DATA = [
                 // 1濾水與儲水
@@ -371,7 +371,7 @@
                 {"category": "1濾水與儲水", "name": "美國LifeStrawPeak個人隨身濾水器4,000公升", "notes": "品牌聲譽高，過濾效果在非洲等地區經過考驗", "price": 908, "link": "https://tw.shp.ee/KceBiia", "capacity_kcal": 0, "capacity_liters": 4000, "calc_method": "per_person"},
                 {"category": "1濾水與儲水", "name": "美國P&G Water Purifier濾水粉(一盒12包)", "notes": "[3年] 每盒12包，每包可處理10公升汙水，需靜置1~4小時", "price": 764, "link": "", "capacity_kcal": 0, "capacity_liters": 120, "calc_method": "total_need"},
                 {"category": "1濾水與儲水", "name": "美國Portable Aqua淨水錠(一組2瓶消毒與去味)", "notes": "[4年] 一組2瓶=50顆淨水錠＋50顆除味錠，可處理25公升汙水", "price": 433, "link": "https://tw.shp.ee/JWw2V9M", "capacity_kcal": 0, "capacity_liters": 25, "calc_method": "total_need"},
-                {"category": "1濾水與儲水", "name": "美國WaterBOB浴缸軟性儲水袋", "notes": "最大可儲存100加侖=378公升，依照浴缸大小決定", "price": 2200, "link": "https://tw.shp.ee/FfHYWbi", "capacity_kcal": 0, "capacity_liters": 300, "calc_method": "total_need"},
+                {"category": "1濾水與儲水", "name": "美國WaterBOB浴缸軟性儲水袋", "notes": "最大可儲存100加侖=378公升，依照浴缸大小決定", "price": 2200, "link": "https://tw.shp.ee/FfHYWbi", "capacity_kcal": 0, "capacity_liters": 378, "calc_method": "total_need"},
                 {"category": "1濾水與儲水", "name": "紐西蘭ESTEL冰川水10L", "notes": "10L * 2箱，合計20公升", "price": 529, "link": "https://tw.shp.ee/i6LamWR", "capacity_kcal": 0, "capacity_liters": 10, "calc_method": "total_need"},
                 {"category": "1濾水與儲水", "name": "日本The Next Dekade 7年保存水2L * 6瓶", "notes": "2L * 6瓶 * 2箱，合計24公升", "price": 280, "link": "https://tw.shp.ee/ZFoMznu", "capacity_kcal": 0, "capacity_liters": 2, "calc_method": "total_need"},
                 {"category": "1濾水與儲水", "name": "日本The Next Dekade 7年保存水0.5L * 24瓶", "notes": "0.5L * 24瓶 * 2箱，合計24公升", "price": 150, "link": "https://tw.shp.ee/ZFoMznu", "capacity_kcal": 0, "capacity_liters": 0.5, "calc_method": "total_need"},
@@ -379,9 +379,8 @@
                 {"category": "2長效期糧食", "name": "日本Satake乾燥飯", "notes": "[5年] 有多種口味，每包約350大卡，冷水20-30分鐘，熱水3-5分鐘", "price": 197, "link": "https://tw.shp.ee/u3Ef7Jc", "capacity_kcal": 350, "capacity_liters": 0, "calc_method": "per_person"},
                 {"category": "2長效期糧食", "name": "穀萊GOOD LIFE沖泡乾燥飯", "notes": "", "price": 110, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
                 {"category": "2長效期糧食", "name": "美國SurvivalTabs口嚼片香草口味(一袋24顆，多2天存活)", "notes": "[25年] 一袋24顆，合計480大卡，供2日最低生存需求，輕巧便攜，不建議當成標準糧食", "price": 561, "link": "https://tw.shp.ee/W1LnMkN", "capacity_kcal": 480, "capacity_liters": 0, "calc_method": "per_person"},
-                {"category": "2長效期糧食", "name": "德國NRG-5棕褐色包裝(非素食)緊急乾糧", "notes": "[20年] 500克一份，供應2,300大卡，70公斤男性一日所需，聽說味道普通", "price": 890, "link": "https://tw.shp.ee/FfHYWbi", "capacity_kcal": 2380, "capacity_liters": 0, "calc_method": "per_person"},
-                {"category": "2長效期糧食", "name": "德國POW-R1緊急乾糧(1盒建議當成半天主食)", "notes": "[20年] 250克一份，供應1,224大卡，70公斤男性半天所需，算好吃", "price": 280, "link": "https://tw.shp.ee/zTYzfTq", "capacity_kcal": 1224, "capacity_liters": 0, "calc_method": "total_need"},
-                {"category": "2長效期糧食", "name": "德國POW-R1緊急乾糧(1盒建議當成半天主食)", "notes": "[20年] 250克一份，供應1,224大卡，70公斤男性半天所需，算好吃", "price": 199, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
+                {"category": "2長效期糧食", "name": "德國NRG-5棕褐色包裝(非素食)緊急乾糧", "notes": "[20年] 500克一份，供應2,300大卡，70公斤男性一日所需，聽說味道普通", "price": 890, "link": "https://tw.shp.ee/FfHYWbi", "capacity_kcal": 2300, "capacity_liters": 0, "calc_method": "per_person"},
+                {"category": "2長效期糧食", "name": "德國POW-R1緊急乾糧(1盒建議當成半天主食)", "notes": "[20年] 250克一份，供應1,224大卡，70公斤男性半天所需，算好吃", "price": 223, "link": "https://tw.shp.ee/zTYzfTq", "capacity_kcal": 1224, "capacity_liters": 0, "calc_method": "total_need"},
                 // 3衛生與醫療
                 {"category": "3衛生與醫療", "name": "日本Osaki大崎防災用柔濕巾(一包7枚)", "notes": "[7年] 擦拭全身的超大型濕紙巾捲", "price": 185, "link": "https://tw.shp.ee/QXzGExJ", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": "daily_use", "units_per_item": 7},
                 {"category": "3衛生與醫療", "name": "日本緊急拋棄式廁所(一盒30份)", "notes": "[15年] 高分子聚合物粉末，將排泄物與尿凝固與消臭", "price": 975, "link": "https://tw.shp.ee/w4kthoZ", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": "daily_use", "units_per_item": 30},
