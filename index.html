@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,15 +9,15 @@
     <meta property="og:title" content="家庭防災包規劃網頁">
     <meta property="og:description" content="依家庭人數與天數計算防災包建議數量，可匯出 PDF 與儲存紀錄。">
     <meta property="og:url" content="https://robert3h.github.io/survival_pack/">
-    <meta property="og:image" content="https://robert3h.github.io/survival_pack/photo.png">
+    <meta property="og:image" content="https://robert3h.github.io/survival_pack/og.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="家庭防災包規劃網頁：依人數與天數計算建議數量">
     <meta property="og:locale" content="zh_TW">
     <meta name="twitter:card" content="summary_large_image">
     
-    <!-- Google Fonts: Noto Sans TC for Traditional Chinese -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
-    
+    <script>/* 在畫面出現前套用讀者上次選的主題，避免閃一下 */try{var t=localStorage.getItem('theme');if(t==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}</script>
+
     <!-- Chart.js for Pie Chart -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.6.1/dist/chart.umd.min.js"></script>
     
@@ -29,187 +28,142 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        /* CSS Styles */
+        /* 外觀對齊 Robert 的個人網站（2026-11-06）：橘色＝可以按；青色＝數字與資料。預設深色，右上角可切換 */
+        :root, :root[data-theme="dark"] {
+            color-scheme: dark;
+            --bg: #0f1113; --surface: #171a1d; --ink: #ececea; --muted: #a2a6aa; --rule: #2a2e33;
+            --accent: #d97757; --accent-strong: #eb9474; --on-accent: #0f1113; --data: #6fd3e3;
+            --tip-bg: #2a2e33; --tip-ink: #ececea;
+        }
+        :root[data-theme="light"] {
+            color-scheme: light;
+            --bg: #ffffff; --surface: #f6f3f1; --ink: #1b1c1e; --muted: #5f6368; --rule: #e3e5e8;
+            --accent: #b4532e; --accent-strong: #8f3f20; --on-accent: #ffffff; --data: #0b7285;
+            --tip-bg: #1b1c1e; --tip-ink: #ffffff;
+        }
         :root {
-            --color-primary: #0056b3;
-            --color-secondary: #6a0dad;
-            --color-dark-grey: #4A4A4A;
-            --color-light-grey: #f8f9fa;
-            --color-unchecked: #e74c3c;
-            --color-checked: #2ecc71;
-            --gradient-hero: linear-gradient(135deg, #a8c0ff, #c9a8ff);
-            --bg-progress: #eaf2ff;
-            --bg-calculator: #f3eaff;
+            --font-body: system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+            --font-log: "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, "Noto Sans Mono", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", monospace;
         }
 
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Noto Sans TC', sans-serif; margin: 0; padding: 0; color: #333; line-height: 1.8; background-color: var(--color-light-grey); }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px 40px; text-align: center; }
-        h1, h2, h3, h4 { margin: 0.5em 0; }
-        h1 { font-size: 2.2rem; font-weight: 900; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
-        h2 { font-size: 2rem; font-weight: 700; color: var(--color-dark-grey); margin-bottom: 1em; }
-        h3 { font-size: 1.2rem; font-weight: 400; max-width: 800px; margin-left: auto; margin-right: auto; }
-        h4 { font-size: 1rem; font-weight: 400; }
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+        body { font-family: var(--font-body); margin: 0; padding: 0; color: var(--ink); font-size: 17px; line-height: 1.75; background: var(--bg); }
+        a { color: var(--accent); }
+        a:hover { color: var(--accent-strong); }
+        p { margin: 0 0 1em; text-wrap: pretty; }
+        .container { max-width: 68rem; margin: 0 auto; padding: 0 24px; }
+        .container > p, .calculation-logic-info { max-width: 46rem; }
 
-        .text-left { text-align: left; }
-        .text-blue { color: var(--color-primary); }
-        .text-bold-blue { color: var(--color-primary); font-weight: 700; text-align: center; }
+        .site-header { position: sticky; top: 0; z-index: 900; background: var(--bg); border-bottom: 1px solid var(--rule); }
+        .site-header .container { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 60px; }
+        .site-name { font-weight: 600; }
+        .theme-toggle { font: inherit; font-size: 0.85rem; color: var(--muted); background: transparent; border: 1px solid var(--rule); border-radius: 6px; padding: 6px 12px; min-height: 36px; cursor: pointer; white-space: nowrap; }
+        .theme-toggle:hover { color: var(--ink); border-color: var(--muted); }
 
-        .section { padding: 50px 0; border-bottom: 1px solid #e0e0e0; }
-        .section:last-child { border-bottom: none; }
-        .section-a { background: var(--gradient-hero); color: white; padding: 60px 20px; }
-        .section-a .hero-sub { font-size: 2.2rem; font-weight: 900; margin: 0.5em 0; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
-        .section-b, .section-c, .section-f, .section-g, .section-h { background-color: #ffffff; }
-        .section-d { background-color: var(--bg-progress); color: var(--color-primary); }
-        .section-d h2 { color: var(--color-primary); }
-        .section-d h3 { font-size: 1.4rem; }
-        .highlight-number { font-size: 1.5em; font-weight: 900; vertical-align: middle; margin: 0 0.2em; }
+        h1, h2, h3 { text-wrap: balance; }
+        h1 { font-size: clamp(1.7rem, 4.6vw, 2.5rem); font-weight: 700; line-height: 1.35; margin: 0 0 14px; }
+        .hero-sub { font-size: clamp(1.1rem, 3vw, 1.35rem); color: var(--muted); margin: 0; }
+        .section-a { padding: 56px 0 40px; }
 
-        .section-e { background-color: var(--bg-calculator); }
-        .section-e h2 { color: var(--color-secondary); }
-        .section-e h3 { color: var(--color-secondary); }
+        .section { padding-bottom: 8px; }
+        .section:not(.section-a) { padding-top: 48px; }
+        .section h2 { font-size: 1.25rem; font-weight: 700; margin: 0 0 16px; padding-top: 20px; border-top: 1px solid var(--rule); }
+        .section h2::before { content: "✦ "; color: var(--accent); }
 
-        /* Intro Image Style */
-        .intro-image-container {
-            margin: 2.5em auto;
-            max-width: 700px;
-        }
-        .intro-image {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
+        .lead { font-size: 1.1rem; font-weight: 600; }
+        .note { color: var(--muted); font-size: 0.95rem; }
+        .attribution { color: var(--muted); }
+        .callout { font-weight: 700; font-size: 1.1rem; margin-top: 1.6em; }
+        .closing-line { font-weight: 600; margin-bottom: 0.4em; }
 
-        .calculator-wrapper { display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; margin: 25px 0; }
-        .input-group { display: flex; align-items: center; gap: 10px; background: white; padding: 12px 18px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-        .input-group i { color: var(--color-secondary); font-size: 1.2rem; }
-        .input-group label { font-weight: 700; }
-        .input-group input { border: 1px solid #ccc; border-radius: 4px; padding: 8px; width: 60px; text-align: center; font-size: 1rem; }
-        .button-group { margin: 25px 0; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
-        .button-group button { padding: 12px 28px; font-size: 1.1rem; font-family: 'Noto Sans TC', sans-serif; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .button-group button:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
-        #calculate-btn { background-color: #8e44ad; color: white; }
-        #select-all-btn { background-color: #27ae60; color: white; }
-        #deselect-all-btn { background-color: #c0392b; color: white; }
+        .stat { font-size: 1.1rem; margin-bottom: 0.4em; }
+        .highlight-number { font-family: var(--font-log); font-size: 1.5em; font-weight: 700; color: var(--data); vertical-align: middle; margin: 0 0.2em; }
 
-        .category-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 40px; text-align: left; }
-        .category-card { background: #ffffff; border: 1px solid #eee; border-radius: 12px; padding: 20px; position: relative; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .category-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
-        .category-card .icon { position: absolute; top: 20px; left: 20px; font-size: 1.8rem; color: #ccc; }
-        .category-card-title { margin-top: 40px; font-weight: 700; font-size: 1.2rem; }
-        .category-card-cost { text-align: right; font-size: 1.4rem; font-weight: 700; color: var(--color-primary); margin-top: 10px; }
+        .calculator-wrapper { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 24px 0; }
+        .input-group { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--rule); padding: 10px 14px; border-radius: 6px; }
+        .input-group i { color: var(--data); }
+        .input-group label { font-weight: 600; }
+        input[type="number"] { font: inherit; font-family: var(--font-log); color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 6px; text-align: center; }
+        input[type="number"]:focus-visible, button:focus-visible, a:focus-visible, input[type="checkbox"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .input-group input { width: 68px; }
+        .button-group { margin: 24px 0; display: flex; gap: 12px; flex-wrap: wrap; }
+        .button-group button { font: inherit; font-weight: 600; padding: 10px 20px; min-height: 44px; border: 1px solid var(--accent); border-radius: 6px; background: transparent; color: var(--accent); cursor: pointer; }
+        .button-group button:hover { color: var(--accent-strong); border-color: var(--accent-strong); }
+        #calculate-btn { background: var(--accent); color: var(--on-accent); }
+        #calculate-btn:hover { background: var(--accent-strong); color: var(--on-accent); }
 
-        .pie-chart-container { max-width: 450px; margin: 40px auto; position: relative; height:450px; width:100%; }
+        .category-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 32px; }
+        .category-card { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; }
+        .category-card .icon { color: var(--muted); text-align: center; }
+        .category-card-title { font-weight: 600; }
+        .category-card-cost { font-family: var(--font-log); font-weight: 700; color: var(--data); white-space: nowrap; }
+        .pie-chart-container { max-width: 420px; margin: 32px auto; position: relative; height: 420px; width: 100%; }
 
-        .item-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; text-align: left; }
-        .item-card { background: #ffffff; border: 2px solid var(--color-unchecked); border-radius: 12px; padding: 20px; position: relative; transition: transform 0.2s, box-shadow 0.2s, border-color 0.3s; display: flex; flex-direction: column; justify-content: space-between; }
-        .item-card.selected { border: 3px solid var(--color-checked); }
-        .item-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-        .item-card-category { font-size: 0.9rem; font-weight: 700; color: #777; margin-bottom: 10px; }
-        .item-card-name { font-weight: 700; font-size: 1.15rem; margin-bottom: 15px; flex-grow: 1; }
-        .item-card-footer { margin-top: 15px; position: relative; }
-        .item-card-price { font-weight: 700; color: var(--color-primary); font-size: 1.2rem; margin-bottom: 10px; }
-        .quantity-wrapper { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
-        .quantity-wrapper label { font-size: 0.9rem; }
-        .quantity-wrapper input { width: 50px; padding: 5px; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
-        .checkbox-wrapper { margin-top: 15px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
-        .checkbox-wrapper input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+        .item-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .item-card { background: var(--surface); border: 2px solid var(--rule); border-radius: 6px; padding: 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; transition: border-color .2s; }
+        .item-card:hover { border-color: var(--muted); }
+        .item-card.selected, .item-card.selected:hover { border-color: var(--data); }
+        .item-card-category { font-family: var(--font-log); font-size: 0.85rem; color: var(--data); margin-bottom: 8px; }
+        .item-card-name { font-weight: 600; margin-bottom: 12px; flex-grow: 1; cursor: pointer; }
+        .item-card-footer { margin-top: 12px; position: relative; }
+        .item-card-price { font-family: var(--font-log); font-weight: 700; margin-bottom: 8px; }
+        .quantity-wrapper { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+        .quantity-wrapper label { font-size: 0.9rem; color: var(--muted); }
+        .quantity-wrapper input { width: 60px; padding: 4px; }
+        .checkbox-wrapper { margin-top: 12px; display: flex; align-items: center; gap: 10px; font-weight: 600; padding-right: 44px; }
+        .checkbox-wrapper input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent); }
+        .checkbox-wrapper label { cursor: pointer; }
 
-        .item-card .tooltip { visibility: hidden; width: 240px; background-color: rgba(0,0,0,0.8); color: #fff; text-align: center; border-radius: 6px; padding: 10px; position: absolute; z-index: 10; bottom: 105%; left: 50%; margin-left: -120px; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .tooltip, .shop-tooltip, .quantity-tooltip, .fab-label { background: var(--tip-bg); color: var(--tip-ink); border-radius: 4px; font-weight: 400; pointer-events: none; }
+        .item-card .tooltip { visibility: hidden; width: 240px; font-size: 0.9rem; line-height: 1.6; padding: 10px; position: absolute; z-index: 10; bottom: 105%; left: 50%; margin-left: -120px; opacity: 0; transition: opacity .2s; }
         .item-card:hover .tooltip { visibility: visible; opacity: 1; }
 
-        .shop-link { position: absolute; bottom: 15px; right: 20px; font-size: 1.8rem; color: var(--color-primary); text-decoration: none; transition: transform 0.2s ease; }
-        .shop-link:hover { transform: scale(1.2); }
-        .shop-link.disabled { color: #ccc; cursor: not-allowed; }
-        .shop-link .shop-tooltip { visibility: hidden; background-color: rgba(0,0,0,0.8); color: #fff; text-align: center; border-radius: 5px; padding: 5px 10px; position: absolute; z-index: 1; bottom: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s; font-size: 0.8rem; white-space: nowrap; }
+        .shop-link { position: absolute; bottom: 0; right: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--accent); text-decoration: none; }
+        .shop-link:hover { color: var(--accent-strong); }
+        .shop-link.disabled { color: var(--rule); cursor: not-allowed; }
+        .shop-link .shop-tooltip { visibility: hidden; padding: 4px 10px; position: absolute; z-index: 1; bottom: 110%; right: 0; opacity: 0; transition: opacity .2s; font-size: 0.8rem; white-space: nowrap; }
         .shop-link:hover .shop-tooltip { visibility: visible; opacity: 1; }
-        
-        .fab-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; align-items: center; gap: 15px; z-index: 1000; }
-        .fab-button { background-color: var(--color-primary); color: white; width: 60px; height: 60px; border-radius: 50%; border: none; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.3s ease; }
-        .fab-button:hover { background-color: #00418a; transform: scale(1.1); }
-        .fab-label { background-color: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; white-space: nowrap; position: absolute; right: 75px; top: 50%; transform: translateY(-50%); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+
+        .fab-container { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 1000; }
+        .fab-button { background: var(--surface); color: var(--accent); width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--rule); display: flex; justify-content: center; align-items: center; font-size: 1.05rem; box-shadow: 0 4px 12px rgba(0, 0, 0, .25); cursor: pointer; text-decoration: none; }
+        .fab-button:hover { color: var(--accent-strong); border-color: var(--accent); }
+        .fab-label { padding: 4px 8px; font-size: 0.8rem; white-space: nowrap; position: absolute; right: 60px; top: 50%; transform: translateY(-50%); opacity: 0; transition: opacity .2s; }
         .fab-item:hover .fab-label { opacity: 1; }
         .fab-item { position: relative; display: flex; align-items: center; }
         #back-to-top { display: none; }
 
-        .download-excel-wrapper { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; margin-bottom: 2em; }
-        .download-excel-wrapper h3 { margin: 0; flex-grow: 1; }
-        .download-btn { background-color: #1D6F42; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 10px; transition: background-color 0.3s; }
-        .download-btn:hover { background-color: #185C37; }
-        
-        /* Calculation Logic Info Box */
-        .calculation-logic-info {
-            text-align: left;
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 15px 25px;
-            margin-bottom: 2em;
-            font-size: 0.95rem;
-        }
-        .calculation-logic-info h4 {
-            margin-top: 0;
-            color: var(--color-dark-grey);
-        }
-        .calculation-logic-info ul {
-            list-style: none;
-            padding-left: 0;
-            margin: 10px 0;
-        }
-        .calculation-logic-info li {
-            margin-bottom: 0.5em;
-        }
-        .calculation-logic-info li i {
-            margin-right: 10px;
-            color: var(--color-secondary);
-            width: 20px;
-            text-align: center;
-        }
+        .download-excel-wrapper { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px 20px; margin-bottom: 24px; }
+        .download-excel-wrapper p { margin: 0; }
+        .download-btn { border: 1px solid var(--accent); color: var(--accent); padding: 10px 18px; min-height: 44px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 10px; }
+        .download-btn:hover { color: var(--accent-strong); border-color: var(--accent-strong); }
 
-        /* Quantity Info Icon & Tooltip */
-        .quantity-info-icon {
-            margin-left: 5px;
-            color: #aaa;
-            cursor: help;
-            position: relative;
-        }
-        .quantity-info-icon .quantity-tooltip {
-            visibility: hidden;
-            width: 220px;
-            background-color: rgba(0,0,0,0.8);
-            color: #fff;
-            text-align: center;
-            border-radius: 5px;
-            padding: 5px 10px;
-            position: absolute;
-            z-index: 1;
-            bottom: 150%; /* Position above the icon */
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.8rem;
-            font-weight: normal;
-            white-space: nowrap;
-        }
-        .quantity-info-icon:hover .quantity-tooltip {
-            visibility: visible;
-            opacity: 1;
-        }
+        .calculation-logic-info { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 20px; margin-bottom: 24px; font-size: 0.95rem; }
+        .calculation-logic-info h3 { font-size: 1rem; margin: 0 0 8px; }
+        .calculation-logic-info ul { list-style: none; padding-left: 0; margin: 10px 0; }
+        .calculation-logic-info li { margin-bottom: 0.5em; }
+        .calculation-logic-info li i { margin-right: 10px; color: var(--data); width: 20px; text-align: center; }
+        .calculation-logic-info p { font-size: 0.9rem; margin: 0; color: var(--muted); }
 
+        .quantity-info-icon { margin-left: 2px; color: var(--muted); cursor: help; position: relative; }
+        .quantity-info-icon .quantity-tooltip { visibility: hidden; padding: 4px 10px; position: absolute; z-index: 1; bottom: 150%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity .2s; font-size: 0.8rem; white-space: nowrap; }
+        .quantity-info-icon:hover .quantity-tooltip { visibility: visible; opacity: 1; }
+
+        .site-footer { margin-top: 56px; padding: 24px 0 32px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 0.9rem; }
+        .site-footer p { margin: 0; }
 
         @media print {
-            /* PDF FIX */
-            html, body {
-                height: auto !important;
-                overflow: visible !important;
+            /* 列印和 PDF 一律淺色，不耗墨也比較好讀 */
+            :root, :root[data-theme] {
+                color-scheme: light;
+                --bg: #ffffff; --surface: #f6f3f1; --ink: #1b1c1e; --muted: #5f6368; --rule: #e3e5e8;
+                --accent: #b4532e; --accent-strong: #8f3f20; --on-accent: #ffffff; --data: #0b7285;
             }
+            html, body { height: auto !important; overflow: visible !important; }
             @page { size: A4 landscape; }
             body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .section { border: none; padding: 20px 0; }
-            .fab-container, .button-group, .download-btn, .calculation-logic-info { display: none !important; }
+            .section:not(.section-a) { padding-top: 20px; }
+            .site-header, .site-footer, .fab-container, .button-group, .download-btn, .calculation-logic-info { display: none !important; }
             .item-card { page-break-inside: avoid; }
             .category-summary-grid { page-break-inside: avoid; }
             .pie-chart-container { max-width: 100%; page-break-inside: avoid; }
@@ -217,27 +171,24 @@
 
         @media (max-width: 1024px) { .item-cards-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) {
-            .container { padding: 20px; }
-            h1 { font-size: 1.8rem; } h2 { font-size: 1.6rem; } h3 { font-size: 1.1rem; }
+            .container { padding: 0 16px; }
+            .section-a { padding: 36px 0 24px; }
             .item-cards-grid { grid-template-columns: 1fr; }
             .category-summary-grid { grid-template-columns: 1fr; }
-            .section-a .hero-sub { font-size: 1.8rem; }
             .fab-container { bottom: 12px; right: 12px; gap: 8px; }
             .fab-button { width: 44px; height: 44px; font-size: 0.95rem; }
             body { padding-bottom: 220px; }
-            /* Mobile style for intro image */
-            .intro-image-container {
-                max-width: 100%;
-                margin: 1.5em 0;
-            }
-            .intro-image {
-                border-radius: 0;
-                box-shadow: none;
-            }
+            .site-footer { margin-top: 32px; }
         }
     </style>
 </head>
 <body>
+    <header class="site-header">
+        <div class="container">
+            <span class="site-name">家庭防災包規劃</span>
+            <button type="button" class="theme-toggle" aria-pressed="false">切換淺色</button>
+        </div>
+    </header>
     <div id="page-content">
         <section class="section section-a">
             <div class="container">
@@ -250,51 +201,46 @@
         <section class="section section-b">
             <div class="container">
                 <h2>引言</h2>
-                <h3 class="text-left">「在戰爭與屈辱面前，你選擇了屈辱！可是，屈辱過後，你仍得面對戰爭！」</h3>
-                <h3 class="text-left">— 已故英國首相，溫斯頓·丘吉爾(1938)</h3>
+                <p>「在戰爭與屈辱面前，你選擇了屈辱！可是，屈辱過後，你仍得面對戰爭！」</p>
+                <p class="attribution">— 已故英國首相，溫斯頓·丘吉爾(1938)</p>
                 
-                <!-- NEW IMAGE -->
-                <div class="intro-image-container">
-                    <img src="./photo.png" alt="Britain and France had to choose between war and dishonour. They chose dishonour. They will have war. — Winston Churchill (1938)" class="intro-image">
-                </div>
-                
-                <h3 class="text-left">台灣正處在一個平行時空的分歧點。</h3>
-                <h3 class="text-left">如果你知道，關鍵日的一個選擇，可能導致兩條完全不同的時空線──自由 VS 極權</h3>
-                <h3 class="text-left">你會選擇提早準備，還是袖手旁觀繼續等待？</h3>
-                <h3 class="text-left">作者近兩個月進行了一項「希望永遠用不到，但一旦需要就關乎生死」的任務：準備家庭災難包。</h3>
-                <h3 class="text-left">準備這些真的很耗神、耗錢也耗時間。但換來的，是內心的安定感，還有當意外發生時，不至於只能手忙腳亂搶物資，避免等別人告訴你怎麼辦的那種被動感。</h3>
-                <h3 class="text-left">颱風、地震、疫情，大家都會做一點準備，但面對更極端且複合式的風險，反而會因為太沉重，而選擇壓抑與忽略不安。</h3>
-                <h3 class="text-left">但事實上，戰爭就是最高強度的綜合災難：水電中斷、物資短缺、資訊封鎖、網路癱瘓、醫療癱瘓、交通停擺、財產喪失、人身威脅，以及各種型態的暴力與侵害。</h3>
-                <h3 class="text-left">不管你的身分與價值觀，這些災難都不會先敲門詢問你的同意：「Hey, bro! Do you want a battle?」</h3>
-                <h3 class="text-left">我希望自己能做決定，而不是在別人決定後被迫接受結果。生存與尊嚴，也應該是我們主動做出的選擇，而不是寄託敵人的仁慈與善意，或讓他人替我們規劃。</h3>
+                <p>台灣正處在一個平行時空的分歧點。</p>
+                <p>如果你知道，關鍵日的一個選擇，可能導致兩條完全不同的時空線──自由 VS 極權</p>
+                <p>你會選擇提早準備，還是袖手旁觀繼續等待？</p>
+                <p>作者近兩個月進行了一項「希望永遠用不到，但一旦需要就關乎生死」的任務：準備家庭災難包。</p>
+                <p>準備這些真的很耗神、耗錢也耗時間。但換來的，是內心的安定感，還有當意外發生時，不至於只能手忙腳亂搶物資，避免等別人告訴你怎麼辦的那種被動感。</p>
+                <p>颱風、地震、疫情，大家都會做一點準備，但面對更極端且複合式的風險，反而會因為太沉重，而選擇壓抑與忽略不安。</p>
+                <p>但事實上，戰爭就是最高強度的綜合災難：水電中斷、物資短缺、資訊封鎖、網路癱瘓、醫療癱瘓、交通停擺、財產喪失、人身威脅，以及各種型態的暴力與侵害。</p>
+                <p>不管你的身分與價值觀，這些災難都不會先敲門詢問你的同意：「Hey, bro! Do you want a battle?」</p>
+                <p>我希望自己能做決定，而不是在別人決定後被迫接受結果。生存與尊嚴，也應該是我們主動做出的選擇，而不是寄託敵人的仁慈與善意，或讓他人替我們規劃。</p>
             </div>
         </section>
 
         <section class="section section-c">
             <div class="container">
                 <h2>防災包建議清單</h2>
-                <h3 class="text-blue">「準備不完全，也勝過完全不準備」— 這一份我為家庭準備的防災包清單，希望能為您提供一些準備時的參考。</h3>
-                <h3 class="text-left">依照人體生存所需的優先順序排列，從1~9依序排列與分類：依序是：</h3>
-                <h3 class="text-left">"1濾水與儲水", "2長效期糧食", "3衛生與醫療", "4保暖與衣物", </h3>
-                <h3 class="text-left">"5能源與燃料", "6通訊", "7防火逃生", "8基礎綜合", "9其他"。</h3>
+                <p class="lead">「準備不完全，也勝過完全不準備」— 這一份我為家庭準備的防災包清單，希望能為您提供一些準備時的參考。</p>
+                <p>依照人體生存所需的優先順序排列，從1~9依序排列與分類：依序是：</p>
+                <p>"1濾水與儲水", "2長效期糧食", "3衛生與醫療", "4保暖與衣物", </p>
+                <p>"5能源與燃料", "6通訊", "7防火逃生", "8基礎綜合", "9其他"。</p>
                 
             </div>
         </section>
         
         <section class="section section-d">
-            <div class="container text-left">
+            <div class="container">
                 <h2>我的家庭防災包選擇進度</h2>
-                <h3>您已勾選 <strong class="highlight-number" id="selected-count">0</strong> 個品項</h3>
-                <h3>已勾選品項預估總金額：NT$ <strong class="highlight-number" id="total-cost">0</strong></h3>
-                <h4>繼續努力，一起讓您的家庭更安全！</h4>
+                <p class="stat">您已勾選 <strong class="highlight-number" id="selected-count">0</strong> 個品項</p>
+                <p class="stat">已勾選品項預估總金額：NT$ <strong class="highlight-number" id="total-cost">0</strong></p>
+                <p class="note">繼續努力，一起讓您的家庭更安全！</p>
             </div>
         </section>
 
         <section class="section section-e">
             <div class="container">
                 <h2>依人數與天數預估數量</h2>
-                <h3 class="text-left">請輸入家庭成員人數與預估儲備天數，系統將自動計算「濾水與儲水」及「長效期糧食」的建議數量。</h3>
-                <h3 class="text-left">注意：「長效期糧食」目前以德國製POW-R1為主力，其他類別品項數量需自行手動調整。</h3>
+                <p>請輸入家庭成員人數與預估儲備天數，系統將自動計算「濾水與儲水」及「長效期糧食」的建議數量。</p>
+                <p>注意：「長效期糧食」目前以德國製POW-R1為主力，其他類別品項數量需自行手動調整。</p>
                 <div class="calculator-wrapper">
                     <div class="input-group">
                         <i class="fas fa-user"></i>
@@ -317,7 +263,7 @@
                     <button id="select-all-btn">快速全部勾選</button>
                     <button id="deselect-all-btn">快速全部取消</button>
                 </div>
-                <h4 class="text-left" style="max-width: 800px; margin: 1em auto;">預設建議值：成人以70公斤男性計算，每日熱量需求2,500大卡，飲水2.5公升；小孩以成人的50%需求量做計算。</h4>
+                <p class="note">預設建議值：成人以70公斤男性計算，每日熱量需求2,500大卡，飲水2.5公升；小孩以成人的50%需求量做計算。</p>
             </div>
         </section>
 
@@ -335,7 +281,7 @@
             <div class="container">
                 <h2>詳細品項與單價數量</h2>
                 <div class="download-excel-wrapper">
-                    <h3 class="text-left">詳細資訊可以下載Excel原始檔案。</h3>
+                    <p>詳細資訊可以下載Excel原始檔案。</p>
                     <a href="./防災包清單_Ver20250725.xlsx" download="防災包清單_Ver20250725.xlsx" class="download-btn">
                         <i class="fas fa-file-excel"></i> 下載 Excel 清單
                     </a>
@@ -343,13 +289,13 @@
 
                 <!-- NEW: Calculation Logic Info Box -->
                 <div class="calculation-logic-info">
-                    <h4>計算邏輯說明：</h4>
+                    <h3>計算邏輯說明：</h3>
                     <ul>
                         <li><i class="fas fa-users"></i> <strong>依人頭計算</strong>：數量 = 大人數 + 小孩數。適用於個人用品 (如濾水器、補充口糧)。</li>
                         <li><i class="fas fa-calculator"></i> <strong>依總需求計算</strong>：數量 = (總需求量 / 每份容量)，無條件進位。適用於水、主力糧食等。</li>
                         <li><i class="fas fa-calendar-day"></i> <strong>依每日消耗計算</strong>：數量 = (總人數 * 天數 / 每份可用次數)，無條件進位。適用於濕紙巾等消耗品。</li>
                     </ul>
-                    <p style="font-size: 0.9rem; margin-bottom: 0;">當您點選「計算建議數量」時，部分品項的數量會依上述邏輯自動更新。數量旁的 <i class="fas fa-info-circle"></i> 圖示會提示該品項的計算方式。</p>
+                    <p>當您點選「計算建議數量」時，部分品項的數量會依上述邏輯自動更新。數量旁的 <i class="fas fa-info-circle"></i> 圖示會提示該品項的計算方式。</p>
                 </div>
 
                 <div id="item-cards-container" class="item-cards-grid"></div>
@@ -359,20 +305,23 @@
         <section class="section section-h">
             <div class="container">
                 <h2>結語</h2>
-                <h3 class="text-left">如果你也曾經覺得焦慮，不妨貼近「第一性原理」來思考：</h3>
-                <h3 class="text-left">你真正的焦慮與擔心是什麼？（生命財產？生活方式？下一代？…）</h3>
-                <h3 class="text-left">讓你不安的因素來自哪裡？（人？事？物？…）</h3>
-                <h3 class="text-left">你現在能做的有什麼？（強化家庭韌性準備？出國移民？祈禱？…）</h3>
-                <h3 class="text-left">這些問題的答案，每個人應該不會一樣，但能幫助我們釐清──什麼是讓你焦慮的源頭？什麼行動能讓你感到安心？</h3>
-                <br>
-                <h3 class="text-bold-blue text-left" style="max-width: 800px; margin: 1em auto;">「行動起來，就是選擇不依賴敵人的善意替你決定未來！」</h3>
-                <br>
-                <h3 class="text-bold-blue">🔁 若您覺得這篇內容對您或您的家人有所幫助，歡迎分享或轉貼。</h3>
-                <h3 class="text-bold-blue">🧩 國家的韌性，從每個家庭的準備開始。</h3>
-                <h3 class="text-bold-blue">✨ 願民主與繁榮與我們同在──直到永遠！</h3>
+                <p>如果你也曾經覺得焦慮，不妨貼近「第一性原理」來思考：</p>
+                <p>你真正的焦慮與擔心是什麼？（生命財產？生活方式？下一代？…）</p>
+                <p>讓你不安的因素來自哪裡？（人？事？物？…）</p>
+                <p>你現在能做的有什麼？（強化家庭韌性準備？出國移民？祈禱？…）</p>
+                <p>這些問題的答案，每個人應該不會一樣，但能幫助我們釐清──什麼是讓你焦慮的源頭？什麼行動能讓你感到安心？</p>
+                <p class="callout">「行動起來，就是選擇不依賴敵人的善意替你決定未來！」</p>
+                <p class="closing-line">🔁 若您覺得這篇內容對您或您的家人有所幫助，歡迎分享或轉貼。</p>
+                <p class="closing-line">🧩 國家的韌性，從每個家庭的準備開始。</p>
+                <p class="closing-line">✨ 願民主與繁榮與我們同在──直到永遠！</p>
             </div>
         </section>
     </div>
+    <footer class="site-footer">
+        <div class="container">
+            <p>作者的個人網站：<a href="https://robert3h.github.io/lsa711/">Robert Huang 黃星翰 →</a></p>
+        </div>
+    </footer>
 
     <!-- Floating Action Buttons -->
     <div class="fab-container">
@@ -468,6 +417,7 @@
             const fileLoader = document.getElementById('file-loader');
 
             let chart;
+            let chartAnimation = true;
             const categoryIcons = {
                 "1濾水與儲水": "fas fa-tint", "2長效期糧食": "fas fa-utensils", "3衛生與醫療": "fas fa-first-aid",
                 "4保暖與衣物": "fas fa-tshirt", "5能源與燃料": "fas fa-bolt", "6通訊": "fas fa-satellite-dish",
@@ -606,14 +556,15 @@
                 const labels = sortedCategories.map(item => item[0]);
                 const data = sortedCategories.map(item => item[1]);
                 const total = data.reduce((acc, val) => acc + val, 0);
-                const backgroundColors = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#6f42c1', '#fd7e14', '#20c9a6'];
+                const backgroundColors = ['#d97757', '#3fb6c9', '#e0b84c', '#7fae7a', '#9a86d6', '#e58fa0', '#4f86d9', '#8a8f94', '#b5a13a'];
 
                 if (chart) { chart.destroy(); }
                 chart = new Chart(pieChartCanvas, {
                     type: 'pie',
-                    data: { labels: labels, datasets: [{ data: data, backgroundColor: backgroundColors, hoverOffset: 4, borderWidth: 1 }] },
+                    data: { labels: labels, datasets: [{ data: data, backgroundColor: backgroundColors, hoverOffset: 4, borderWidth: 2, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() }] },
                     options: {
                         responsive: true, maintainAspectRatio: false,
+                        animation: chartAnimation ? undefined : false,
                         plugins: {
                             legend: { display: false },
                             tooltip: {
@@ -677,6 +628,22 @@
                 updateSummaries();
             }
             
+            const root = document.documentElement;
+            const themeToggle = document.querySelector('.theme-toggle');
+            function syncThemeToggle() {
+                const dark = root.getAttribute('data-theme') !== 'light';
+                themeToggle.textContent = dark ? '切換淺色' : '切換深色';
+                themeToggle.setAttribute('aria-pressed', String(!dark));
+            }
+            themeToggle.addEventListener('click', () => {
+                const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                root.setAttribute('data-theme', next);
+                try { localStorage.setItem('theme', next); } catch (e) {}
+                syncThemeToggle();
+                updateSummaries();   // 圓餅圖的分隔線要跟著底色
+            });
+            syncThemeToggle();
+
             window.addEventListener('scroll', () => {
                 backToTopBtn.style.display = (window.scrollY > 300) ? 'flex' : 'none';
             });
@@ -685,9 +652,17 @@
                 const element = document.getElementById('page-content');
                 const opt = {
                     margin: 0.5, filename: '家庭防災包規劃清單.pdf', image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+                    html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' },
+                    pagebreak: { mode: ['css'], avoid: ['.container > p', 'h2', '.calculation-logic-info', '.calculator-wrapper', '.category-summary-grid', '.pie-chart-container'] }
                 };
-                html2pdf().from(element).set(opt).save();
+                // 畫面可能是深色，PDF 固定用淺色；圖表不跑動畫，截圖時才不會是空白；產生完再換回來
+                const theme = root.getAttribute('data-theme');
+                root.setAttribute('data-theme', 'light');
+                chartAnimation = false;
+                updateSummaries();
+                chartAnimation = true;
+                const restore = () => { root.setAttribute('data-theme', theme); updateSummaries(); };
+                html2pdf().from(element).set(opt).save().then(restore, restore);
             });
 
             fabSave.addEventListener('click', () => {
@@ -762,4 +737,4 @@
         });
     </script>
 </body>
-</ht
+</html>
