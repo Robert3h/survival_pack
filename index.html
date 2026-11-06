@@ -98,7 +98,15 @@
         .category-card .icon { color: var(--muted); text-align: center; }
         .category-card-title { font-weight: 600; }
         .category-card-cost { font-family: var(--font-log); font-weight: 700; color: var(--data); white-space: nowrap; }
-        .pie-chart-container { max-width: 420px; margin: 32px auto; position: relative; height: 420px; width: 100%; }
+        .pie-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 24px 40px; margin: 32px 0; }
+        .pie-chart-container { flex: 0 1 380px; position: relative; height: 380px; min-width: 0; }
+        .pie-side { flex: 1 1 320px; min-width: 0; }
+        .pie-legend { list-style: none; margin: 0; padding: 0; }
+        .pie-legend li { display: grid; grid-template-columns: 14px 1fr auto 3.2em; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--rule); }
+        .pie-swatch { width: 14px; height: 14px; border-radius: 3px; }
+        .pie-money, .pie-percent { font-family: var(--font-log); white-space: nowrap; text-align: right; }
+        .pie-money { color: var(--data); }
+        .pie-percent { font-weight: 700; }
 
         .item-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
         .item-card { background: var(--surface); border: 2px solid var(--rule); border-radius: 6px; padding: 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; transition: border-color .2s; }
@@ -166,7 +174,7 @@
             .site-header, .site-footer, .fab-container, .button-group, .download-btn, .calculation-logic-info { display: none !important; }
             .item-card { page-break-inside: avoid; }
             .category-summary-grid { page-break-inside: avoid; }
-            .pie-chart-container { max-width: 100%; page-break-inside: avoid; }
+            .pie-wrap { page-break-inside: avoid; }
         }
 
         @media (max-width: 1024px) { .item-cards-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -179,6 +187,7 @@
             .fab-button { width: 44px; height: 44px; font-size: 0.95rem; }
             body { padding-bottom: 220px; }
             .site-footer { margin-top: 32px; }
+            .pie-chart-container { flex-basis: 100%; height: 320px; }
         }
     </style>
 </head>
@@ -220,9 +229,9 @@
             <div class="container">
                 <h2>防災包建議清單</h2>
                 <p class="lead">「準備不完全，也勝過完全不準備」— 這一份我為家庭準備的防災包清單，希望能為您提供一些準備時的參考。</p>
-                <p>依照人體生存所需的優先順序排列，從1~9依序排列與分類：依序是：</p>
+                <p>依照人體生存所需的優先順序排列，從1~10依序排列與分類：依序是：</p>
                 <p>"1濾水與儲水", "2長效期糧食", "3衛生與醫療", "4保暖與衣物", </p>
-                <p>"5能源與燃料", "6通訊", "7防火逃生", "8基礎綜合", "9其他"。</p>
+                <p>"5能源與燃料", "6通訊", "7防火逃生", "8基礎綜合", "9其他", "10防身安全"。</p>
                 
             </div>
         </section>
@@ -271,8 +280,14 @@
             <div class="container">
                 <h2>類別金額小計</h2>
                 <div id="category-summary" class="category-summary-grid"></div>
-                <div class="pie-chart-container">
-                    <canvas id="category-pie-chart"></canvas>
+                <div class="pie-wrap">
+                    <div class="pie-chart-container">
+                        <canvas id="category-pie-chart"></canvas>
+                    </div>
+                    <div class="pie-side">
+                        <p class="note" id="pie-empty">勾選品項後，這裡會顯示各類別的金額與占比。</p>
+                        <ul class="pie-legend" id="pie-legend"></ul>
+                    </div>
                 </div>
             </div>
         </section>
@@ -281,8 +296,8 @@
             <div class="container">
                 <h2>詳細品項與單價數量</h2>
                 <div class="download-excel-wrapper">
-                    <p>詳細資訊可以下載Excel原始檔案。</p>
-                    <a href="./防災包清單_Ver20250725.xlsx" download="防災包清單_Ver20250725.xlsx" class="download-btn">
+                    <p>詳細資訊可以下載 Excel 清單。</p>
+                    <a href="./防災包清單_20260110.xlsx" download="防災包清單_20260110.xlsx" class="download-btn">
                         <i class="fas fa-file-excel"></i> 下載 Excel 清單
                     </a>
                 </div>
@@ -347,53 +362,56 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // ===================================================================================
-            // DATA SOURCE - Based on your latest corrections
+            // DATA SOURCE - 我的家庭防災包_20260110版本.xlsx（數量與購買日期不上網頁）
             // ===================================================================================
             const PRODUCT_DATA = [
                 // 1濾水與儲水
-                { "category": "1濾水與儲水", "name": "日本MochiGoo PET材質可折疊水壺袋(8公升容量)", "notes": "PET材質水溫建議不超過60攝氏度", "price": 147, "link": "https://tw.shp.ee/5nuoRdJ", "capacity_kcal": 0, "capacity_liters": 8, "calc_method": "total_need" },
-                { "category": "1濾水與儲水", "name": "美國Katadyn Micropur MP1過濾隱孢蟲藥錠(一盒30顆)", "notes": "[5年] 每盒30顆，每顆可處理1公升汙水，需靜置1~4小時", "price": 638, "link": "https://tw.shp.ee/jd5s5j3", "capacity_kcal": 0, "capacity_liters": 30, "calc_method": "total_need" },
-                { "category": "1濾水與儲水", "name": "美國LifeStrawPeak個人隨身濾水器4,000公升(平裝版包裝)", "notes": "品牌聲譽高，過濾效果在非洲等地區經過考驗", "price": 810, "link": "https://tw.shp.ee/KceBiia", "capacity_kcal": 0, "capacity_liters": 4000, "calc_method": "per_person" },
-                { "category": "1濾水與儲水", "name": "美國P&G Water Purifier濾水粉(一盒12包)", "notes": "[3年] 每盒12包，每包可處理10公升汙水，需靜置1~4小時", "price": 764, "link": "", "capacity_kcal": 0, "capacity_liters": 120, "calc_method": "total_need" },
-                { "category": "1濾水與儲水", "name": "美國Portable Aqua淨水錠(一組2瓶消毒與去味)", "notes": "[4年] 一組2瓶=50顆淨水錠+50顆除味錠，可處理25公升汙水", "price": 294, "link": "https://tw.shp.ee/JWw2V9M", "capacity_kcal": 0, "capacity_liters": 25, "calc_method": "total_need" },
-                { "category": "1濾水與儲水", "name": "美國WaterBOB浴缸軟性儲水袋", "notes": "最大可儲存100加侖=378公升，依照浴缸大小決定", "price": 2200, "link": "https://tw.shp.ee/FfHYWbi", "capacity_kcal": 0, "capacity_liters": 378, "calc_method": "total_need" },
-                
+                {"category": "1濾水與儲水", "name": "日本MochiGoo PET材質可折疊水壺袋(8公升容量)", "notes": "PET材質水溫建議不超過60攝氏度", "price": 147, "link": "https://tw.shp.ee/5nuoRdJ", "capacity_kcal": 0, "capacity_liters": 8, "calc_method": "total_need"},
+                {"category": "1濾水與儲水", "name": "美國Katadyn Micropur MP1過濾隱孢蟲藥錠(一盒30顆)", "notes": "[5年] 每盒30顆，每顆可處理1公升汙水，需靜置1~4小時", "price": 705, "link": "https://tw.shp.ee/jd5oSQE", "capacity_kcal": 0, "capacity_liters": 30, "calc_method": "total_need"},
+                {"category": "1濾水與儲水", "name": "美國LifeStrawPeak個人隨身濾水器4,000公升", "notes": "品牌聲譽高，過濾效果在非洲等地區經過考驗", "price": 908, "link": "https://tw.shp.ee/KceBiia", "capacity_kcal": 0, "capacity_liters": 4000, "calc_method": "per_person"},
+                {"category": "1濾水與儲水", "name": "美國P&G Water Purifier濾水粉(一盒12包)", "notes": "[3年] 每盒12包，每包可處理10公升汙水，需靜置1~4小時", "price": 764, "link": "", "capacity_kcal": 0, "capacity_liters": 120, "calc_method": "total_need"},
+                {"category": "1濾水與儲水", "name": "美國Portable Aqua淨水錠(一組2瓶消毒與去味)", "notes": "[4年] 一組2瓶=50顆淨水錠＋50顆除味錠，可處理25公升汙水", "price": 433, "link": "https://tw.shp.ee/JWw2V9M", "capacity_kcal": 0, "capacity_liters": 25, "calc_method": "total_need"},
+                {"category": "1濾水與儲水", "name": "美國WaterBOB浴缸軟性儲水袋", "notes": "最大可儲存100加侖=378公升，依照浴缸大小決定", "price": 2200, "link": "https://tw.shp.ee/FfHYWbi", "capacity_kcal": 0, "capacity_liters": 300, "calc_method": "total_need"},
+                {"category": "1濾水與儲水", "name": "紐西蘭ESTEL冰川水10L", "notes": "10L * 2箱，合計20公升", "price": 529, "link": "https://tw.shp.ee/i6LamWR", "capacity_kcal": 0, "capacity_liters": 10, "calc_method": "total_need"},
+                {"category": "1濾水與儲水", "name": "日本The Next Dekade 7年保存水2L * 6瓶", "notes": "2L * 6瓶 * 2箱，合計24公升", "price": 280, "link": "https://tw.shp.ee/ZFoMznu", "capacity_kcal": 0, "capacity_liters": 2, "calc_method": "total_need"},
+                {"category": "1濾水與儲水", "name": "日本The Next Dekade 7年保存水0.5L * 24瓶", "notes": "0.5L * 24瓶 * 2箱，合計24公升", "price": 150, "link": "https://tw.shp.ee/ZFoMznu", "capacity_kcal": 0, "capacity_liters": 0.5, "calc_method": "total_need"},
                 // 2長效期糧食
-                { "category": "2長效期糧食", "name": "日本Satake乾燥飯", "notes": "[5年] 有多種口味，每包350大卡，冷水20~30分鐘，熱水3~5分鐘", "price": 197, "link": "https://tw.shp.ee/u3Ef7Jc", "capacity_kcal": 350, "capacity_liters": 0, "calc_method": "per_person" },
-                { "category": "2長效期糧食", "name": "美國SurvivalTabs口嚼片香草口味(一袋24顆，多2天存活)", "notes": "[25年] 一袋24顆，合計480大卡，供2日最低生存需求，輕巧便攜，不建議當成標準糧食", "price": 561, "link": "https://tw.shp.ee/W1LnMkN", "capacity_kcal": 480, "capacity_liters": 0, "calc_method": "per_person" },
-                { "category": "2長效期糧食", "name": "德國NRG-5棕褐色包裝(非素食)緊急乾糧", "notes": "[20年] 500克一份，供應2,300大卡，70公斤男性一日所需，聽說味道普通", "price": 890, "link": "https://tw.shp.ee/FfHYWbi", "capacity_kcal": 2300, "capacity_liters": 0, "calc_method": "per_person" },
-                { "category": "2長效期糧食", "name": "德國POW-R1緊急乾糧(1盒建議當成半天主食)", "notes": "[20年] 250克一份，供應1,250大卡，70公斤男性半天所需，聽說算好吃", "price": 280, "link": "https://tw.shp.ee/zTYzfTq", "capacity_kcal": 1250, "capacity_liters": 0, "calc_method": "total_need" },
-                
+                {"category": "2長效期糧食", "name": "日本Satake乾燥飯", "notes": "[5年] 有多種口味，每包約350大卡，冷水20-30分鐘，熱水3-5分鐘", "price": 197, "link": "https://tw.shp.ee/u3Ef7Jc", "capacity_kcal": 350, "capacity_liters": 0, "calc_method": "per_person"},
+                {"category": "2長效期糧食", "name": "穀萊GOOD LIFE沖泡乾燥飯", "notes": "", "price": 110, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
+                {"category": "2長效期糧食", "name": "美國SurvivalTabs口嚼片香草口味(一袋24顆，多2天存活)", "notes": "[25年] 一袋24顆，合計480大卡，供2日最低生存需求，輕巧便攜，不建議當成標準糧食", "price": 561, "link": "https://tw.shp.ee/W1LnMkN", "capacity_kcal": 480, "capacity_liters": 0, "calc_method": "per_person"},
+                {"category": "2長效期糧食", "name": "德國NRG-5棕褐色包裝(非素食)緊急乾糧", "notes": "[20年] 500克一份，供應2,300大卡，70公斤男性一日所需，聽說味道普通", "price": 890, "link": "https://tw.shp.ee/FfHYWbi", "capacity_kcal": 2380, "capacity_liters": 0, "calc_method": "per_person"},
+                {"category": "2長效期糧食", "name": "德國POW-R1緊急乾糧(1盒建議當成半天主食)", "notes": "[20年] 250克一份，供應1,224大卡，70公斤男性半天所需，算好吃", "price": 280, "link": "https://tw.shp.ee/zTYzfTq", "capacity_kcal": 1224, "capacity_liters": 0, "calc_method": "total_need"},
+                {"category": "2長效期糧食", "name": "德國POW-R1緊急乾糧(1盒建議當成半天主食)", "notes": "[20年] 250克一份，供應1,224大卡，70公斤男性半天所需，算好吃", "price": 199, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
                 // 3衛生與醫療
-                { "category": "3衛生與醫療", "name": "日本Osaki大崎防災用柔濕巾(一包7枚)", "notes": "[7年] 擦拭全身的超大型濕紙巾捲", "price": 185, "link": "https://tw.shp.ee/QXzGExJ", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": "daily_use", "units_per_item": 7 },
-                { "category": "3衛生與醫療", "name": "日本緊急拋棄式廁所(一盒30份)", "notes": "[15年] 高分子聚合物粉末，將排泄物與尿凝固與消臭", "price": 975, "link": "https://tw.shp.ee/w4kthoZ", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": "daily_use", "units_per_item": 30 },
-                { "category": "3衛生與醫療", "name": "口服用藥品", "notes": "普拿疼、腸胃藥、感冒藥…", "price": 883, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
-                { "category": "3衛生與醫療", "name": "傷口處理藥品", "notes": "抗生素軟膏、消毒液(氯己定噴霧消毒劑)、碘液、多尺寸滅菌彈性繃帶、滅菌大頭棉棒…", "price": 677, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
-                { "category": "3衛生與醫療", "name": "德國H&H Medical迷你壓縮紗布", "notes": "900元是一捆(6入)，700元是單片，兩者皆為醫療級紗布", "price": 880, "link": "https://reurl.cc/...", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
-                
+                {"category": "3衛生與醫療", "name": "日本Osaki大崎防災用柔濕巾(一包7枚)", "notes": "[7年] 擦拭全身的超大型濕紙巾捲", "price": 185, "link": "https://tw.shp.ee/QXzGExJ", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": "daily_use", "units_per_item": 7},
+                {"category": "3衛生與醫療", "name": "日本緊急拋棄式廁所(一盒30份)", "notes": "[15年] 高分子聚合物粉末，將排泄物與尿凝固與消臭", "price": 975, "link": "https://tw.shp.ee/w4kthoZ", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": "daily_use", "units_per_item": 30},
+                {"category": "3衛生與醫療", "name": "日本Qbit緊急拋棄式廁所(一盒50份)", "notes": "[15年] 高分子聚合物粉末，將排泄物與尿凝固與消臭", "price": 962, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": "daily_use", "units_per_item": 50},
+                {"category": "3衛生與醫療", "name": "口服用藥品", "notes": "普拿疼、腸胃藥、感冒藥…", "price": 883, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
+                {"category": "3衛生與醫療", "name": "傷口處理藥品", "notes": "抗生素軟膏、消毒液(氯己定噴霧消毒劑)、碘液、多尺寸滅菌彈性繃帶、滅菌大頭棉棒…", "price": 677, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
+                {"category": "3衛生與醫療", "name": "簡易拋棄式尿袋", "notes": "", "price": 79, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
+                {"category": "3衛生與醫療", "name": "SOF 非充氣式止血帶（較舊款）", "notes": "", "price": 1380, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
+                {"category": "3衛生與醫療", "name": "C.A.T-非充氣式止血帶（較新款）", "notes": "", "price": 1580, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
+                {"category": "3衛生與醫療", "name": "止血帶收納袋", "notes": "", "price": 550, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
                 // 4保暖與衣物
-                { "category": "4保暖與衣物", "name": "台灣ADISI防水防撕裂睡袋+ADISI輕旅保潔睡袋", "notes": "--", "price": 460, "link": "https://tw.shp.ee/KceBiia", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
-                
+                {"category": "4保暖與衣物", "name": "台灣ADISI防水雨衣型披風+ADISI鋁箔保溫睡袋", "notes": "", "price": 460, "link": "https://tw.shp.ee/KceBiia", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
                 // 5能源與燃料
-                { "category": "5能源與燃料", "name": "[搜尋中]單晶矽太陽能充電板", "notes": "搜尋中...為了安全性將以日本、台灣、歐美國品牌為目標", "price": 0, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
-                { "category": "5能源與燃料", "name": "[搜尋中]磷酸鐵鋰移動電站(LiFePO4)", "notes": "搜尋中...為了安全性將以日本、台灣、歐美國品牌為目標", "price": 0, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
-                { "category": "5能源與燃料", "name": "日本Panasonic Evolta長效鹼性電池", "notes": "[10年] 包含：3號AA與4號AAA電池", "price": 807, "link": "https://tw.shp.ee/vbbukfA", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
-                { "category": "5能源與燃料", "name": "美國CampMaid固體精密火種(一盒12顆裝)", "notes": "每塊可以燃燒12分鐘，推薦搭配可放置固體或液態燃料的美國Vargo鈦金屬小爐具VT305", "price": 69, "link": "https://tw.shp.ee/qVHMQgy", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
-                { "category": "5能源與燃料", "name": "美國電弧點火器兼防水LED手電筒", "notes": "mini-USB充電口", "price": 790, "link": "https://tw.shp.ee/FfHYWbi", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
-                
+                {"category": "5能源與燃料", "name": "大河先生_儲能小瓦力PRO + 45W太陽能戰術桌板+專屬收納袋", "notes": "", "price": 10820, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
+                {"category": "5能源與燃料", "name": "大河先生_emirai 1500W/1280Wh 次世代行動電站+120W太陽能板+專屬收納袋", "notes": "", "price": 38401, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
+                {"category": "5能源與燃料", "name": "日本Panasonic Evolta長效鹼性電池", "notes": "[10年] 包含：3號AA與4號AAA電池", "price": 807, "link": "https://tw.shp.ee/vbbukfA", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
+                {"category": "5能源與燃料", "name": "美國CampMaid固體精密火種(一盒12顆裝)", "notes": "每塊可以燃燒12分鐘，推薦搭配可放置固體或液態燃料的美國Vargo鈦金屬小爐具VT305", "price": 69, "link": "https://tw.shp.ee/qVHMQgy", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
+                {"category": "5能源與燃料", "name": "美國電弧點火器兼防水LED手電筒", "notes": "mini-USB充電口", "price": 790, "link": "https://tw.shp.ee/FfHYWbi", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
                 // 6通訊
-                { "category": "6通訊", "name": "台灣ADV-AD3免執照無線電對講機(2支一組)", "notes": "免考取台灣NCC業餘無線電執照，較高功率的機種會被沒收與罰款", "price": 2514, "link": "https://tw.shp.ee/trpb5UN", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
-                
+                {"category": "6通訊", "name": "台灣ADI AV-03免執照對講機(2支一組)", "notes": "免考取台灣NCC業餘無線電執照，較高功率的機種會被沒收與罰款", "price": 2514, "link": "https://tw.shp.ee/trpb5UN", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
                 // 7防火逃生
-                { "category": "7防火逃生", "name": "台灣寧威防煙頭罩", "notes": "[5年] 大約耐熱500度", "price": 367, "link": "https://tw.shp.ee/6A6iFpk", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": "per_person" },
-                
+                {"category": "7防火逃生", "name": "台灣寧威防煙頭罩", "notes": "[5年] 大約耐熱500度", "price": 367, "link": "https://tw.shp.ee/6A6iFpk", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": "per_person"},
                 // 8基礎綜合
-                { "category": "8基礎綜合", "name": "防災用品(包含：保溫鋁箔毯、醫療剪刀、IFAK快速反應包、德國BH-580乾糧*)", "notes": "鋪地、覆蓋、破損替換，建議每人至少2張", "price": 1760, "link": "https://jingpinyuan.tw/product.php", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
-                { "category": "8基礎綜合", "name": "避難防災包搭配(包含：戰術大防災包、德國POW-R1乾糧*、太陽能充電收音機…)", "notes": "基本品項詳閱京品源網站", "price": 5589, "link": "https://jingpinyuan.tw/product.php", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
-                { "category": "8基礎綜合", "name": "避難防災包搭配(包含：美國戰術止血帶、防身噴劑、破窗器、可摺水壺含濾嘴*、EDC隨身側背包...)", "notes": "止血帶x3、可彎曲水壺x2、[2年] 濾嘴可過濾1,000公升x5、防身噴劑兼破窗器x2", "price": 14530, "link": "https://kuma-academy.org/", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null },
-                
+                {"category": "8基礎綜合", "name": "防災用品(包含：保溫鋁箔毯、醫療剪刀、IFAK快速反應包、德國BH-580乾糧*)", "notes": "鋪地、覆蓋、破損替換，建議每人至少2張", "price": 1760, "link": "https://jingpinyuan.tw/product.php", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
+                {"category": "8基礎綜合", "name": "避難防災包搭配(包含：戰術大防災包、德國POW-R1乾糧*、太陽能充電收音機…)", "notes": "基本品項詳閱京品源網站", "price": 5589, "link": "https://jingpinyuan.tw/product.php", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
+                {"category": "8基礎綜合", "name": "避難防災包搭配(包含：防身噴劑、破窗器、可摺水壺含濾嘴*、EDC隨身側背包...)", "notes": "可彎曲水壺x2、[2年] 濾嘴可過濾1,000公升x5、防身噴劑兼破窗器x2", "price": 19348, "link": "https://kuma-academy.org/", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null},
                 // 9其他
-                { "category": "9其他", "name": "中國Keith鈦金屬筷子+日本MontBell鈦金屬叉匙", "notes": "中國Keith鈦金屬筷子(560)+日本MontBell鈦金屬叉匙(465)-蝦幣折扣", "price": 762, "link": "https://tw.shp.ee/qVHMQgy", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": "per_person" }
+                {"category": "9其他", "name": "中國Keith鈦金屬筷子+日本MontBell鈦金屬叉匙", "notes": "中國Keith鈦金屬筷子(560)+日本MontBell鈦金屬叉匙(465)-蝦幣折扣", "price": 762, "link": "https://tw.shp.ee/qVHMQgy", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": "per_person"},
+                // 10防身安全
+                {"category": "10防身安全", "name": "防身合金球棒", "notes": "", "price": 292, "link": "", "capacity_kcal": 0, "capacity_liters": 0, "calc_method": null}
             ];
             // ===================================================================================
             // END OF DATA SOURCE
@@ -421,7 +439,7 @@
             const categoryIcons = {
                 "1濾水與儲水": "fas fa-tint", "2長效期糧食": "fas fa-utensils", "3衛生與醫療": "fas fa-first-aid",
                 "4保暖與衣物": "fas fa-tshirt", "5能源與燃料": "fas fa-bolt", "6通訊": "fas fa-satellite-dish",
-                "7防火逃生": "fas fa-fire-extinguisher", "8基礎綜合": "fas fa-tools", "9其他": "fas fa-ellipsis-h",
+                "7防火逃生": "fas fa-fire-extinguisher", "8基礎綜合": "fas fa-tools", "9其他": "fas fa-ellipsis-h", "10防身安全": "fas fa-shield-alt",
             };
 
             function initializeCards() {
@@ -505,7 +523,7 @@
             }
 
             function renderCategorySummary() {
-                const categories = [...new Set(PRODUCT_DATA.map(p => p.category))].sort();
+                const categories = [...new Set(PRODUCT_DATA.map(p => p.category))].sort((a, b) => parseInt(a) - parseInt(b));
                 categorySummaryContainer.innerHTML = '';
                 categories.forEach(cat => {
                     const card = document.createElement('div');
@@ -556,11 +574,41 @@
                 const labels = sortedCategories.map(item => item[0]);
                 const data = sortedCategories.map(item => item[1]);
                 const total = data.reduce((acc, val) => acc + val, 0);
-                const backgroundColors = ['#d97757', '#3fb6c9', '#e0b84c', '#7fae7a', '#9a86d6', '#e58fa0', '#4f86d9', '#8a8f94', '#b5a13a'];
+                // 同一個橘色系由深到淺，金額最大的最深；和個人網站的主色一致
+                const backgroundColors = ['#a8472c', '#bd5a3b', '#d97757', '#e08b6e', '#e59e85', '#eab19c', '#efc3b2', '#c9b3a8', '#b3a49c', '#9c918b'];
+                const percentOf = value => total > 0 ? Math.round(value / total * 100) : 0;
+
+                document.getElementById('pie-empty').hidden = labels.length > 0;
+                document.getElementById('pie-legend').innerHTML = labels.map((label, i) => `
+                    <li>
+                        <span class="pie-swatch" style="background:${backgroundColors[i]}"></span>
+                        <span class="pie-name">${label}</span>
+                        <span class="pie-money">NT$ ${Math.round(data[i]).toLocaleString()}</span>
+                        <span class="pie-percent">${percentOf(data[i]) < 1 ? "&lt;1" : percentOf(data[i])}%</span>
+                    </li>`).join('');
+
+                // 占比夠大的區塊，直接把百分比寫在圖上
+                const sliceLabels = {
+                    id: 'sliceLabels',
+                    afterDatasetsDraw(c) {
+                        const g = c.ctx;
+                        g.save();
+                        g.font = '700 15px "Cascadia Mono", Consolas, monospace';
+                        g.textAlign = 'center'; g.textBaseline = 'middle';
+                        c.getDatasetMeta(0).data.forEach((arc, i) => {
+                            if (percentOf(data[i]) < 6) return;
+                            const p = arc.tooltipPosition();
+                            g.fillStyle = i < 3 ? '#ffffff' : '#1b1c1e';
+                            g.fillText(percentOf(data[i]) + '%', p.x, p.y);
+                        });
+                        g.restore();
+                    }
+                };
 
                 if (chart) { chart.destroy(); }
                 chart = new Chart(pieChartCanvas, {
                     type: 'pie',
+                    plugins: [sliceLabels],
                     data: { labels: labels, datasets: [{ data: data, backgroundColor: backgroundColors, hoverOffset: 4, borderWidth: 2, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() }] },
                     options: {
                         responsive: true, maintainAspectRatio: false,
@@ -652,8 +700,8 @@
                 const element = document.getElementById('page-content');
                 const opt = {
                     margin: 0.5, filename: '家庭防災包規劃清單.pdf', image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' },
-                    pagebreak: { mode: ['css'], avoid: ['.container > p', 'h2', '.calculation-logic-info', '.calculator-wrapper', '.category-summary-grid', '.pie-chart-container'] }
+                    html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' },
+                    pagebreak: { mode: ['css'], avoid: ['.container > p', 'h2', '.calculation-logic-info', '.calculator-wrapper', '.category-summary-grid', '.pie-wrap'] }
                 };
                 // 畫面可能是深色，PDF 固定用淺色；圖表不跑動畫，截圖時才不會是空白；產生完再換回來
                 const theme = root.getAttribute('data-theme');
@@ -700,6 +748,11 @@
                         adultsInput.value = loadedData.inputs.adults || 2;
                         childrenInput.value = loadedData.inputs.children || 1;
                         daysInput.value = loadedData.inputs.days || 14;
+                        if (loadedData.items.length !== PRODUCT_DATA.length) {
+                            updateSummaries();
+                            alert('這是舊版清單的紀錄檔，品項已經更新，所以只載入人數與天數。');
+                            return;
+                        }
                         loadedData.items.forEach(itemState => {
                             const qtyInput = document.getElementById(`qty-${itemState.id.split('-')[1]}`);
                             const checkInput = document.getElementById(`check-${itemState.id.split('-')[1]}`);
